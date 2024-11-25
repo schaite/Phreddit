@@ -300,7 +300,7 @@ async function initializeDB() {
         postIDs: [postRef1],
         startDate: new Date('August 10, 2014 04:18:00'),
         members: [userRef1, userRef3, userRef8, userRef2, userRef6],
-        memberCount: 4,
+        memberCount: 5,
     };
     const community2 = { // community object 2
         communityID: 'community2',
