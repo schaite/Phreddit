@@ -73,7 +73,7 @@ function createPost(postObj) {
         postedBy: postObj.postedBy,
         postedDate: postObj.postedDate,
         views: postObj.views,
-        linkFlairIDs: postObj.linkFlairIDs,
+        linkFlairID: postObj.linkFlairID,
         commentIDs: postObj.commentIDs,
     });
     return newPostDoc.save();
