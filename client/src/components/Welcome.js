@@ -10,7 +10,7 @@ const Welcome = () => {
             <div className="welcome-buttons">
                 <Link to="/register" className="button">Register as a New User</Link>
                 <Link to="/login" className="button">Login as an Existing User</Link>
-                <Link to="/explore" className="button">Continue as a Guest User</Link>
+                <Link to="/home" className="button">Continue as a Guest User</Link>
             </div>
         </div>
     );

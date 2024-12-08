@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/authService';
 import "../stylesheets/Login.css";
 
-const Login = () => {
+const Login = ({onLogin}) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -31,22 +31,31 @@ const Login = () => {
         }
 
         try {
-            await loginUser(formData);
+            const response = await loginUser(formData);
             setMessage(''); // Clear any previous error messages
-            navigate('/'); // Redirect to the homepage after successful login
+            onLogin(response.user);
+            navigate('/home'); // Redirect to the homepage after successful login
         } catch (error) {
-            // Handle server-side errors
-            setMessage(error.response?.data?.message || 'Invalid email or password.');
-        }
+            console.log('Error received:', error);
+            if (!error.response) {
+                // Handle network or connection issues
+                setMessage('Network error. Please check your internet connection.');
+            } else if (error.response.status >= 500) {
+                // Handle server errors
+                setMessage('Server error. Please try again later.');
+            } else {
+                // Handle other errors (e.g., invalid credentials)
+                setMessage(error.response.data?.message || 'Invalid email or password.');
+            }
+        }  
     };
-    
 
     return (
         <div className="login-container">
             <h2>Login</h2>
             {message && <p className="error-message">{message}</p>}
             <form onSubmit={handleSubmit}>
-            <div className="form-group">
+                <div className="form-group">
                     <input
                         type="text"
                         name="email"

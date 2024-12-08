@@ -46,8 +46,16 @@ const Register = () => {
             setMessage(response.message);
             navigate('/'); // Redirect to the welcome page after successful registration
         } catch (error) {
-            // Handle server-side errors
-            setMessage(error.response?.data?.message || 'Error registering account.');
+            if (error.code === 'ECONNABORTED') {
+                // Handle timeout error
+                setMessage('The request took too long. Please try again later.');
+            } else if (!error.response) {
+                // Handle system/communication errors
+                setMessage('Unable to connect to the server. Please try again later.');
+            } else {
+                // Handle server-side validation errors
+                setMessage(error.response.data?.message || 'Error registering account.');
+            }
         }
     };
 
