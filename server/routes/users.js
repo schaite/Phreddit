@@ -97,33 +97,35 @@ router.post('/login', async (req, res) => {
 
   // Validate input
   if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
+    console.log('Missing email or password');
+    return res.status(400).json({ message: 'Email and password are required.' });
   }
 
   try {
-      // Find user by email
-      const user = await User.findOne({ email });
-      if (!user || !user.hashedPassword) {
-          return res.status(401).json({ message: 'Invalid email or password.' });
-      }
+    // Find user by email
+    const user = await User.findOne({ email });
 
-      // Validate password
-      const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
-      if (!isPasswordValid) {
-          return res.status(401).json({ message: 'Invalid email or password.' });
-      }
+    if (!user || !user.hashedPassword) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
 
-      // Login successful
-      res.json({
-          message: 'Login successful.',
-          user: { id: user._id, displayName: user.displayName, email: user.email },
-      });
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    // Login successful
+    res.json({
+      message: 'Login successful.',
+      user: { id: user._id, displayName: user.displayName, email: user.email },
+    });
   } catch (err) {
-      console.error('Error during login:', err.message); // Log for debugging
-      res.status(500).json({ message: 'Server error. Please try again later.' });
+    console.error('Error during login:', err.message); // Log for debugging
+    res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 });
-
 
 
 // PUT (update) an existing user by ID

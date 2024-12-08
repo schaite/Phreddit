@@ -1,0 +1,114 @@
+.banner {
+    background-color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+.app-name {
+    color: #ff4500;
+    font-size: 24px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.app-name:focus, .app-name:visited, .app-name:hover, .app-name:active {
+    color: #ff4500;
+    text-decoration: bold;
+}
+
+.search-box {
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 15px;
+    width: 300px;
+    font-size: 16px;
+}
+.button-container {
+    display: flex;
+    gap: 10px; /* Add space between Guest and Create Post buttons */
+    align-items: center; /* Align buttons vertically */
+}
+
+/* Profile Button */
+.profile-button {
+    background-color: grey;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.profile-button:disabled {
+    background-color: lightgrey;
+    cursor: not-allowed;
+}
+
+.profile-button:hover:not(:disabled) {
+    background-color: #ff4500;
+}
+
+/* Logout Button */
+.logout-button {
+    background-color: grey; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Create Post Button */
+.create-post-button {
+    background-color: grey;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.create-post-button:hover:not(:disabled), .create-post-button:active, .create-post-button.active {
+    background-color: #ff4500;
+}
+
+.create-post-button:disabled {
+    background-color: lightgrey;
+    cursor: not-allowed;
+}
+
+/* Error Message Section */
+.error-message {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid red;
+    background-color: #ffe6e6;
+    color: #d8000c;
+    text-align: center;
+}
+
+.error-restart-button {
+    background-color: grey;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.error-restart-button:hover {
+    background-color: #ff4500;
+}
