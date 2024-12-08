@@ -1,0 +1,80 @@
+/* Register Component Styling */
+
+/* Main container */
+.register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Heading styling */
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Paragraph for messages */
+.register-container p {
+    color: red;
+    font-size: 14px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+/* Form styling */
+.register-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Input fields styling */
+.register-container input[type="text"],
+.register-container input[type="password"] {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: calc(100% - 22px);
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.register-container input[type="text"]:focus,
+.register-container input[type="password"]:focus {
+    border-color: #ff4500;
+    outline: none;
+}
+
+/* Button styling */
+.register-container button {
+    background-color: grey;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.register-container button:hover {
+    background-color: #ff4500;
+}
+
+/* Align error messages and validation feedback */
+.register-container .error {
+    color: red;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-left: 5px;
+}

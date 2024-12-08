@@ -13,10 +13,12 @@ const userSchema = new mongoose.Schema({
     },
     firstName: {
         type: String,
+        required: true, 
         maxlength: 50, 
     },
     lastName: {
         type: String,
+        required: true, 
         maxlength: 50,
     },
     hashedPassword: {
@@ -27,9 +29,13 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 100,
     },
+    roles: {
+        type: [String],
+        default: ['user'],
+    }
 });
 
-userSchema.virtual('url').get(function (){
+userSchema.virtual('url').get(function () {
     return `users/${this._id}`;
 });
 
