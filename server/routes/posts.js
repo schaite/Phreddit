@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const Post = require('../models/Posts');
 const LinkFlair = require('../models/LinkFlairs'); // Adjust the path as per your project structure
-const Community = require("../models/Communities");
 
 //GET all posts
 router.get('/', async (req, res)=>{
@@ -36,16 +35,6 @@ router.get('/:id', async(req, res)=>{
     }
 });
 
-// Get all communities
-router.get("/communities", async (req, res) => {
-    try {
-      const communities = await Community.find();
-      res.json(communities);
-    } catch (err) {
-      res.status(500).json({ message: "Failed to fetch communities." });
-    }
-  });
-
 // POST - Create a new post 
 router.post('/', async (req, res) => {
     const { title, content, postedBy, linkFlairID } = req.body;
@@ -75,14 +64,6 @@ router.post('/', async (req, res) => {
 
     try {
         const newPost = await post.save();
-        // Validate the community ID
-        const validCommunity = await Community.findById(community);
-        if (!validCommunity) {
-            return res.status(404).json({ message: 'Community not found' });
-        }
-
-        // Update the community with the new post ID
-        validCommunity.postIDs.push(newPost._id);
         await validCommunity.save();
         res.status(201).json(newPost);
     } catch (err) {
