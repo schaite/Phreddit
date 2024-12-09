@@ -8,6 +8,8 @@ import NavBar from "./NavBar";
 import NewPostPage from "./NewPostPage";
 import ErrorBoundary from "./ErrorBoundary";
 import "../stylesheets/phreddit.css";
+import NewCommunityPage from "./NewCommunityPage";
+
 export default function Phreddit() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({
@@ -69,6 +71,9 @@ export default function Phreddit() {
                   }
                 />
               </Routes>
+              <Routes>
+    <Route path="/new-community" element={<NewCommunityPage userId={user._id} isLoggedIn={isLoggedIn} />} />
+</Routes>
             </div>
           </div>
         </div>
