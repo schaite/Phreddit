@@ -74,15 +74,13 @@ export default function Phreddit() {
                 isLoggedIn={isLoggedIn}
                 joinedCommunityIds={joinedCommunityIds}
             />
-            <div className="main-container">
               <Routes>
                 <Route path="/" element={<Welcome/>}/>
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/login" element={<Login onLogin={handleLogin}/>} />
                 <Route path="/new-post" element={<NewPostPage isLoggedIn={isLoggedIn} userId={isLoggedIn ? user._id : null}/>}/>
                 <Route path="/new-community" element={<NewCommunityPage userId={user._id} isLoggedIn={isLoggedIn} />} />
-              <Routes>
-            </div>
+              </Routes>
           </div>
         </div>
       </Router>

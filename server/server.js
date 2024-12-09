@@ -26,13 +26,11 @@ const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
 const linkFlairRoutes = require('./routes/linkflairs');
 const userRoutes = require('./routes/users');
-const postsRoute = require("./routes/posts");
 app.use('/api/communities', communityRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/linkflairs', linkFlairRoutes);
 app.use('/api/users', userRoutes);
-app.use("/api", postsRoute);
 
 app.get("/", function (req, res) {
     res.send("Hello Phreddit!");
