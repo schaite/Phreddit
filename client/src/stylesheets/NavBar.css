@@ -1,0 +1,108 @@
+/* NavBar: Fixed width and full height */
+.nav-bar {
+    width: 250px;
+    background-color: white;
+    padding: 10px;
+    border-right: 1px solid black;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+
+.nav-link {
+    display: block;
+    padding: 10px;
+    background-color: lightgrey;
+    text-decoration: none;
+    color: black;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.nav-link:hover, .nav-link:focus{
+    background-color: #ff4500;
+    outline: none;
+}
+
+.nav-link.active-link {
+    background-color: #ff4500; /* Active state */
+}
+
+.nav-link.active {
+    background-color: #ff4500; 
+    color: white;
+}
+
+.nav-link.active {
+    background-color: #ff4500; /* Reddish orange */
+}
+
+
+.delimiter {
+    border-bottom: 1px solid black;
+    margin: 10px 0px;
+
+}
+
+.communities-header {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.create-community-button {
+    background-color: grey;
+    color:white;
+    border:none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor:pointer;
+    font-size:16px;
+    margin-bottom:10px;
+    text-decoration: none;
+}
+
+.create-community-button:hover, .create-community-button:focus{
+    background-color: #ff4500;
+    color: white;
+    outline: none;
+}
+
+.active-button {
+    background-color: #ff4500;
+    color:white;
+
+}
+
+.community-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.community-list li {
+    margin-bottom: 10px;
+}
+
+.community-list li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.community-list li a:hover, .community-list li a:focus {
+    background-color: #e0f7fa;
+    outline: none;
+}
+
+.community-list li a.active-link {
+    background-color: #e0f7fa;
+    font-weight: bold;
+}

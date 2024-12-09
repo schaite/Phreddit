@@ -1,8 +1,17 @@
 .welcome-container {
-    text-align: center;
-    margin-top: 50px;
-    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    flex-grow: 1; /* Ensures it takes up available space */
+    /* max-width: 100%; */
+     /* Prevents overflowing the parent width */
+    height: 100%; /* Matches the parent's height */
+    padding: 20px;
+    box-sizing: border-box; /* Consistent sizing with padding */
+    overflow-y: auto; /* Adds scroll if content exceeds height */
 }
+
 
 .welcome-container h1 {
     font-size: 36px;
