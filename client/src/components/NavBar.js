@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylesheets/NavBar.css";
 
 function NavBar({ isLoggedIn, joinedCommunityIds = [] }) {
     const [communities, setCommunities] = useState([]);
     const location = useLocation();
+    const navigate = useNavigate();
     const isCreateCommunityActive = location.pathname === "/new-community";
 
     useEffect(() => {
@@ -29,25 +30,33 @@ function NavBar({ isLoggedIn, joinedCommunityIds = [] }) {
         fetchCommunities();
     }, [joinedCommunityIds]);
 
+    const handleCreateCommunityClick = () => {
+        if (isLoggedIn) {
+            navigate("/new-community"); // Navigate to the new community page
+        } else {
+            alert("You must be logged in to create a community."); // Notify the user
+        }
+    };
+
     return (
         <nav id="nav-bar" className="nav-bar">
             <Link
                 to="/"
-                className={`nav-link ${location.pathname === "/" ? "active-link" : ""}`}
+                className={`nav-link ${location.pathname === "/home" ? "active-link" : ""}`}
             >
                 Home
             </Link>
             <div className="delimiter"></div>
             <h3 className="communities-header">Communities</h3>
-            <Link
-                to={isLoggedIn ? "/new-community" : "#"}
+            <button
+                onClick={handleCreateCommunityClick}
                 className={`create-community-button ${isCreateCommunityActive ? "active-button" : ""}`}
                 id="create-community-button"
-                style={{ pointerEvents: isLoggedIn ? "auto" : "none" }} // Disable link for guests
+                disabled={!isLoggedIn} // Disable the button if the user is not logged in
                 title={!isLoggedIn ? "Login required to create a community" : ""}
             >
                 Create Community
-            </Link>
+            </button>
             <ul className="community-list">
                 {communities.map((community) => (
                     <li key={community._id}>

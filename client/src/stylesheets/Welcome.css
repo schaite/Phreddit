@@ -1,17 +1,15 @@
 .welcome-container {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
+    justify-content: flex-start; /* Centers content vertically */
+    align-items: center; /* Centers content horizontally */
     flex-grow: 1; /* Ensures it takes up available space */
-    /* max-width: 100%; */
-     /* Prevents overflowing the parent width */
-    height: 100%; /* Matches the parent's height */
+    max-width: 100%; /* Prevents overflowing horizontally */
+    height: 100%; /* Matches the height of the parent container */
     padding: 20px;
-    box-sizing: border-box; /* Consistent sizing with padding */
-    overflow-y: auto; /* Adds scroll if content exceeds height */
+    box-sizing: border-box; /* Consistent sizing */
+    text-align: center; /* Aligns all text in the center */
 }
-
 
 .welcome-container h1 {
     font-size: 36px;
