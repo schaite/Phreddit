@@ -38,6 +38,29 @@ router.get('/:id', async (req,res)=>{
     }
 });
 
+// GET - Communities a user has joined
+router.get('/user-communities/:userId', async (req, res) => {
+    const { userId } = req.params;
+  
+    // Validate the user ID
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid User ID' });
+    }
+  
+    try {
+      // Find all communities where the user is a member
+      const joinedCommunities = await Community.find({ members: userId })
+        .populate('members', 'displayName email') // Populate member details
+        .populate('postIDs', 'title content'); // Optionally populate posts
+  
+      res.json(joinedCommunities); // Return the joined communities
+    } catch (err) {
+      console.error('Error fetching user communities:', err);
+      res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+  });
+  
+
 //POST - Create a new community
 // POST /communities - Create a new community
 router.post('/', async (req, res) => {

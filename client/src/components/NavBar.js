@@ -3,7 +3,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylesheets/NavBar.css";
 
-function NavBar({ isLoggedIn, joinedCommunityIds = [] }) {
+function NavBar({ isLoggedIn, userId }) {
     const [communities, setCommunities] = useState([]);
     const location = useLocation();
     const navigate = useNavigate();
@@ -12,23 +12,44 @@ function NavBar({ isLoggedIn, joinedCommunityIds = [] }) {
     useEffect(() => {
         const fetchCommunities = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/communities");
-                // Sort communities: joined ones at the top
-                const sortedCommunities = response.data.sort((a, b) => {
-                    const isAJoined = joinedCommunityIds.includes(a._id);
-                    const isBJoined = joinedCommunityIds.includes(b._id);
-                    if (isAJoined && !isBJoined) return -1;
-                    if (!isAJoined && isBJoined) return 1;
-                    return a.name.localeCompare(b.name); // Sort alphabetically
-                });
-                setCommunities(sortedCommunities);
+                if (isLoggedIn && userId) {
+                    // Use the `/user-communities/:userId` endpoint to fetch joined communities
+                    const joinedResponse = await axios.get(
+                        `http://localhost:8000/api/communities/user-communities/${userId}`
+                    );
+                    const joinedCommunities = joinedResponse.data;
+
+                    // Fetch all communities
+                    const allResponse = await axios.get("http://localhost:8000/api/communities");
+                    const allCommunities = allResponse.data;
+
+                    // Sort communities: joined at the top
+                    const sortedCommunities = allCommunities.sort((a, b) => {
+                        const isAJoined = joinedCommunities.some((community) => community._id === a._id);
+                        const isBJoined = joinedCommunities.some((community) => community._id === b._id);
+
+                        // Bring joined communities to the top
+                        if (isAJoined && !isBJoined) return -1;
+                        if (!isAJoined && isBJoined) return 1;
+
+                        // Alphabetical sort
+                        return a.name.localeCompare(b.name);
+                    });
+
+                    setCommunities(sortedCommunities);
+                } else {
+                    // If not logged in, fetch all communities and sort alphabetically
+                    const response = await axios.get("http://localhost:8000/api/communities");
+                    const sortedCommunities = response.data.sort((a, b) => a.name.localeCompare(b.name));
+                    setCommunities(sortedCommunities);
+                }
             } catch (error) {
                 console.error("Error fetching communities:", error);
             }
         };
 
         fetchCommunities();
-    }, [joinedCommunityIds]);
+    }, [isLoggedIn, userId]); // Update when login status or user ID changes
 
     const handleCreateCommunityClick = () => {
         if (isLoggedIn) {
@@ -41,7 +62,7 @@ function NavBar({ isLoggedIn, joinedCommunityIds = [] }) {
     return (
         <nav id="nav-bar" className="nav-bar">
             <Link
-                to="/"
+                to="/home"
                 className={`nav-link ${location.pathname === "/home" ? "active-link" : ""}`}
             >
                 Home
@@ -76,4 +97,5 @@ function NavBar({ isLoggedIn, joinedCommunityIds = [] }) {
 }
 
 export default NavBar;
+
 
