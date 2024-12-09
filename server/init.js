@@ -15,7 +15,7 @@
 // Pass URL of your mongoDB instance as first argument
 // (e.g., mongodb://127.0.0.1:27017/fake_so)
 
-//node server/init.js mongodb://127.0.0.1:27017/phreddit admin@example.com AdminDisplayName secureAdminPass
+//node server/init.js mongodb://127.0.0.1:27017/phreddit admin@example.com AdminDisplayName AdminFirstName AdminLastName secureAdminPass
 
 
 const mongoose = require('mongoose');
@@ -28,9 +28,16 @@ const UserModel = require('./models/Users');
 
 let userArgs = process.argv.slice(2);
 
+const [mongoDB, adminEmail, adminDisplayName, adminFirstName, adminLastName, adminPassword] = userArgs;
+
 if (!userArgs[0].startsWith('mongodb')) {
     console.log('ERROR: You need to specify a valid mongodb URL as the first argument');
-    return
+    return;
+}
+
+if (userArgs.length < 6) {
+    console.log('ERROR: Provide admin email, display name, first name, last name, and password as command-line arguments.');
+    return;
 }
 
 /*
@@ -39,12 +46,6 @@ The email address, display name, and password for an admin
 user must be provided as the command-line arguments to server/init.js. 
 You must use these credentials to create a user profile for admin in the database.
 */
-if (userArgs.length < 4) {
-    console.log('ERROR: Provide admin email, display name, and password as command-line arguments.');
-    return;
-}
-
-const [mongoDB, adminEmail, adminDisplayName, adminPassword] = userArgs;
 mongoose.connect(mongoDB);
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -91,28 +92,33 @@ function createCommunity(communityObj) {
     return newCommunityDoc.save();
 }
 
-function createUser(userObj){
-    return bcrypt.hash(userObj.password, 10).then((hashedPassword) =>{
+function createUser(userObj) {
+    return bcrypt.hash(userObj.password, 10).then((hashedPassword) => {
         let newUserDoc = new UserModel({
             email: userObj.email,
             displayName: userObj.displayName,
             firstName: userObj.firstName,
             lastName: userObj.lastName,
             hashedPassword,
-            reputation: userObj.reputation,
+            reputation: userObj.reputation || 100,
+            role: userObj.role || "user", // Ensure role is a string
         });
         return newUserDoc.save();
     });
 }
+
 
 async function initializeDB() {
     console.log('Creating admin user....');
     const adminUser = {
         email: adminEmail,
         displayName: adminDisplayName,
+        firstName: adminFirstName,
+        lastName: adminLastName,
         password: adminPassword,
         reputation: 1000,
-    };
+        role: "admin", // Explicitly set as a string
+    };    
 
     let adminRef = await createUser(adminUser);
 
@@ -138,71 +144,96 @@ async function initializeDB() {
     let linkFlairRef3 = await createLinkFlair(linkFlair3);
     let linkFlairRef4 = await createLinkFlair(linkFlair4);
 
-    //User objects
+    // User objects
     console.log('Creating sample users...');
     const user1 = {
         email: 'user1@example.com', 
         displayName: 'rollo', 
-        password: 'securePass1'
-    }
-
+        firstName: 'Rollo',
+        lastName: 'Smith',
+        password: 'securePass1',
+        reputation: 150,
+        role: 'user'
+    };
     const userRef1 = await createUser(user1);
 
     const user2 = {
         email: 'user2@example.com', 
         displayName: 'astyanax', 
-        password: 'securePass2'
-    }
-
+        firstName: 'Astyanax',
+        lastName: 'Jones',
+        password: 'securePass2',
+        reputation: 120,
+        role: 'user'
+    };
     const userRef2 = await createUser(user2);
 
     const user3 = {
         email: 'user3@example.com', 
         displayName: 'shemp', 
-        password: 'securePass3'
-    }
-
+        firstName: 'Shemp',
+        lastName: 'Howard',
+        password: 'securePass3',
+        reputation: 100,
+        role: 'user'
+    };
     const userRef3 = await createUser(user3);
 
     const user4 = {
         email: 'user4@example.com', 
         displayName: 'bigfeet', 
-        password: 'securePass4'
-    }
-
+        firstName: 'Big',
+        lastName: 'Foot',
+        password: 'securePass4',
+        reputation: 110,
+        role: 'user'
+    };
     const userRef4 = await createUser(user4);
 
     const user5 = {
         email: 'user5@example.com', 
         displayName: 'outtheretruth47', 
-        password: 'securePass5'
-    }
-
+        firstName: 'Outthere',
+        lastName: 'Truth',
+        password: 'securePass5',
+        reputation: 95,
+        role: 'user'
+    };
     const userRef5 = await createUser(user5);
 
     const user6 = {
         email: 'user6@example.com', 
         displayName: 'trucknutz69', 
-        password: 'securePass6'
-    }
-
+        firstName: 'Truck',
+        lastName: 'Nutz',
+        password: 'securePass6',
+        reputation: 130,
+        role: 'user'
+    };
     const userRef6 = await createUser(user6);
 
     const user7 = {
         email: 'user7@example.com', 
         displayName: 'MarcoArelius', 
-        password: 'securePass7'
-    }
-
+        firstName: 'Marco',
+        lastName: 'Arelius',
+        password: 'securePass7',
+        reputation: 140,
+        role: 'user'
+    };
     const userRef7 = await createUser(user7);
 
     const user8 = {
-        email: 'use8@example.com', 
+        email: 'user8@example.com', 
         displayName: 'catlady13', 
-        password: 'securePass8'
-    }
-
+        firstName: 'Cat',
+        lastName: 'Lady',
+        password: 'securePass8',
+        reputation: 100,
+        role: 'user'
+    };
     const userRef8 = await createUser(user8);
+
     
     // comment objects
     const comment7 = { // comment 7

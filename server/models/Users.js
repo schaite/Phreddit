@@ -29,9 +29,9 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 100,
     },
-    roles: {
-        type: [String],
-        default: ['user'],
+    role: {
+        type: String,
+        default: 'user',
     }
 });
 
