@@ -1,18 +1,6 @@
-.main-content {
-    flex: 1; /* Take the remaining space beside the NavBar */
-    display: flex; /* Required for child alignment */
-    flex-direction: column; /* Allows vertical alignment for children */
-    overflow-y: auto; /* Adds vertical scroll if needed */
-    height: 100%; /* Ensures it matches the height of the container */
-    padding: 0; /* Prevents unnecessary spacing */
-    box-sizing: border-box; /* Ensures padding is included in width/height */
-    background-color: white; /* Optional for styling */
-}
-
-.nav-container {
-    display: flex;
-    flex: 1; /* Ensures it fills the remaining space below the Banner */
-    height: 100%; /* Matches the parent's height */
-    overflow: hidden; /* Prevents scrollbars for overflow */
-}
+.container {
+    display:flex;
+    height: 100vh;
+    overflow: hidden;
+  }
 
