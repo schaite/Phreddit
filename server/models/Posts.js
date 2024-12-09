@@ -26,6 +26,11 @@ const postSchema = new mongoose.Schema({
         default: Date.now,
         required:true
     },
+    community: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Community",
+        required: true,
+      },      
     commentIDs:[{
         type: mongoose.Schema.Types.ObjectId,
         ref:'Comment'

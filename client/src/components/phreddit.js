@@ -5,8 +5,9 @@ import Welcome from "./Welcome";
 import Login from "./Login";
 import Banner from "./Banner";
 import NavBar from "./NavBar";
+import NewPostPage from "./NewPostPage";
 import ErrorBoundary from "./ErrorBoundary";
-
+import "../stylesheets/phreddit.css";
 export default function Phreddit() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({
@@ -58,6 +59,15 @@ export default function Phreddit() {
                 <Route path="/" element={<Welcome/>}/>
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/login" element={<Login onLogin={handleLogin}/>} />
+                <Route
+                  path="/new-post"
+                  element={
+                    <NewPostPage
+                      userId={isLoggedIn ? user._id : null} // Pass userId for backend
+                      isLoggedIn={isLoggedIn} // Pass login status
+                    />
+                  }
+                />
               </Routes>
             </div>
           </div>
