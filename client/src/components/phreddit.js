@@ -4,6 +4,7 @@ import Register from "./Register";
 import Welcome from "./Welcome";
 import Login from "./Login";
 import Banner from "./Banner";
+import NavBar from "./NavBar";
 import ErrorBoundary from "./ErrorBoundary";
 
 export default function Phreddit() {
@@ -11,6 +12,7 @@ export default function Phreddit() {
   const [user, setUser] = useState({
     displayName: "",
     role: "guest",
+    joinedCommunities: [],
   });   
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function Phreddit() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUser({ displayName: "", role: "guest" });
+    setUser({ displayName: "", role: "guest", joinedCommunities: []});
 
     // Clear login state and user details from localStorage
     localStorage.removeItem("user");
@@ -40,16 +42,26 @@ export default function Phreddit() {
   return (
     <ErrorBoundary>
       <Router>
-        <Banner 
-          isLoggedIn={isLoggedIn} 
-          userDisplayName={user.displayName}
-          onLogout={handleLogout} 
-        />
-        <Routes>
-          <Route path="/" element={<Welcome/>}/>
-          <Route path="/register" element={<Register/>}/>
-          <Route path="/login" element={<Login onLogin={handleLogin}/>} />
-        </Routes>
+        <div className="wrapper">
+            <Banner 
+              isLoggedIn={isLoggedIn} 
+              userDisplayName={user.displayName}
+              onLogout={handleLogout} 
+            />
+          <div className="nav-container">
+            <NavBar
+                isLoggedIn={isLoggedIn}
+                joinedCommunityIds={user.joinedCommunities}
+            />
+            <div className="main-container">
+              <Routes>
+                <Route path="/" element={<Welcome/>}/>
+                <Route path="/register" element={<Register/>}/>
+                <Route path="/login" element={<Login onLogin={handleLogin}/>} />
+              </Routes>
+            </div>
+          </div>
+        </div>
       </Router>
     </ErrorBoundary>
   );
