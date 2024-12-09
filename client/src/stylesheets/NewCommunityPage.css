@@ -1,0 +1,47 @@
+.new-community-page {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.new-community-page h1 {
+    text-align: center;
+    color: #333;
+}
+
+.new-community-page form label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+.new-community-page form input,
+.new-community-page form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.new-community-page form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.new-community-page form button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+}
