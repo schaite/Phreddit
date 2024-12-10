@@ -63,6 +63,7 @@ function createComment(commentObj) {
         commentedBy: commentObj.commentedBy,
         commentedDate: commentObj.commentedDate,
         commentIDs: commentObj.commentIDs,
+        vote: commentObj.vote,
     });
     return newCommentDoc.save();
 }
@@ -109,7 +110,25 @@ function createUser(userObj) {
 
 
 async function initializeDB() {
-    console.log('Creating admin user....');
+    try {
+        await CommunityModel.deleteMany({});
+        console.log('Deleted all communities.');
+
+        await PostModel.deleteMany({});
+        console.log('Deleted all posts.');
+
+        await CommentModel.deleteMany({});
+        console.log('Deleted all comments.');
+
+        await LinkFlairModel.deleteMany({});
+        console.log('Deleted all link flairs.');
+
+        await UserModel.deleteMany({});
+        console.log('Deleted all users.');
+    } catch (error) {
+        console.error('Error deleting existing data:', error);
+        return;
+    }
     const adminUser = {
         email: adminEmail,
         displayName: adminDisplayName,

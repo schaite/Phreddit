@@ -34,7 +34,6 @@ function Home({isLoggedIn, userId}) {
                 const linkFlairs = linkFlairsRes.data;
                 const commentsData = commentsRes.data;
                 const userCommunities = userCommunitiesRes.data;
-                console.log(userCommunities);
 
                 // Enrich posts with community names and link flairs
                 const enrichedPosts = postsData.map((post) => {
@@ -87,8 +86,6 @@ function Home({isLoggedIn, userId}) {
             setOrder("newest");
         }
     }, [location]);
-    console.log(userCommunityPosts);
-    console.log(isLoggedIn);
 
     return (
         <div id="home" className="home">

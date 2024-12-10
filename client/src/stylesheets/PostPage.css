@@ -1,0 +1,55 @@
+.post-page {
+    flex-grow:1;
+    padding: 20px;
+    max-height: 100vh;
+    overflow-y:auto;
+    box-sizing: border-box;
+}
+
+.post-header {
+    padding-bottom: 20px;
+}
+
+.post-header p {
+    font-size:16px;
+    margin: 5px 0;
+}
+
+.post-header h1 {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.post-stats {
+    margin:auto;
+}
+
+.post-stat-item {
+    background-color: #e0f7fa;
+    border-radius: 10px; /* Same rounded edges as .upvotes */
+    padding: 5px 10px;
+    display: inline-block; /* Keeps it inline while applying spacing */
+    margin-right: 5px; /* Adds space between items */
+}
+
+
+.add-comment-button {
+    margin-top:20px;
+    background-color: gray;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-comment-button:hover {
+    background-color: #ff4500;
+  }
+
+.separator {
+    margin: 20px 0;
+    border: none;
+    height: 1px;
+    background-color: black;
+}

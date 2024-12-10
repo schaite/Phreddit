@@ -20,6 +20,11 @@ const commentSchema = new mongoose.Schema({
         type: Date,
         default:Date.now,
         required:true
+    },
+    vote:{
+        type: Number,
+        required: true,
+        default: 0,
     }
 });
 
