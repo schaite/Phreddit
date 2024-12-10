@@ -20,7 +20,11 @@ function Post({ post, showCommunityName, comments}) {
             <h4>{post.title}</h4>
             {post.linkFlair && <span className="link-flair">{post.linkFlair}</span>}
             <p>{post.content.substring(0, 80)}...</p>
-            <p>{post.views} Views | {totalComments} Comments | {post.vote} Upvotes</p>
+            <p>
+                <span className="post-stat">{post.views} Views</span> 
+                <span className="post-stat">{totalComments} Comments</span>  
+                <span className="post-stat">{post.vote} Upvotes</span>
+            </p>
         </div>
     );
 }

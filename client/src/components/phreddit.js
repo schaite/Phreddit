@@ -10,6 +10,7 @@ import NewPostPage from "./NewPostPage";
 import ErrorBoundary from "./ErrorBoundary";
 import "../stylesheets/phreddit.css";
 import NewCommunityPage from "./NewCommunityPage";
+import PostPage from "./PostPage";
 
 export default function Phreddit() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -66,6 +67,14 @@ export default function Phreddit() {
                     <Home
                       isLoggedIn={isLoggedIn}
                       userId={isLoggedIn?user.id : null}
+                    />
+                  }
+                />
+                <Route 
+                  path="/post/:postID"
+                  element={
+                    <PostPage
+                    isLoggedIn={isLoggedIn}
                     />
                   }
                 />

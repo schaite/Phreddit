@@ -64,3 +64,11 @@
 .other-posts h2{
     color: rgb(54, 50, 50);
 }
+
+.post-stat {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px; /* Same rounded edges as .upvotes */
+    padding: 5px 10px;
+    display: inline-block; /* Keeps it inline while applying spacing */
+    margin-right: 5px; /* Adds space between items */
+}
