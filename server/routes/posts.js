@@ -2,7 +2,7 @@ const express = require ('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const Post = require('../models/Posts');
-const LinkFlair = require('../models/LinkFlairs'); // Adjust the path as per your project structure
+const User = require('../models/Users');
 
 //GET all posts
 router.get('/', async (req, res)=>{
@@ -102,6 +102,52 @@ router.put('/:id', async (req, res) => {
         res.json(post);
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+router.put('/:id/vote', async (req, res) => {
+    const {id} = req.params;
+    const {type, userId} = req.body;
+
+    if(!mongoose.Types.ObjectId.isValid(userId)){
+        return res.status(400).json({message:'Invalid Post ID'});
+    }
+
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'Invalid User ID' });
+    }
+
+    if (!['upvote', 'downvote'].includes(type)) {
+        return res.status(400).json({ message: 'Invalid vote type' });
+    }
+
+    try{
+        const post = await Post.findById(id).populate('postedBy');
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+
+        const voter = await User.findById(userId);
+        if (!voter) return res.status(404).json({ message: 'User not found' });
+
+        // Check voter reputation
+        if (voter.reputation < 50) {
+            return res.status(403).json({ message: 'User does not have enough reputation to vote' });
+        }
+
+        // Update vote count
+        const increment = type === 'upvote' ? 1 : -1;
+        post.vote += increment;
+
+        // Update poster's reputation
+        const reputationChange = type === 'upvote' ? 5 : -10;
+        post.postedBy.reputation += reputationChange;
+
+        // Save changes
+        await post.save();
+        await post.postedBy.save();
+
+        res.json({ vote: post.vote });
+    }catch(err){
+        res.status(500).json({message: err.message});
     }
 });
 

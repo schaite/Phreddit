@@ -14,6 +14,12 @@
     margin-bottom: 10px;
 }
 
+.comment-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
 .reply-button {
     background-color: grey;
     color: white;
@@ -27,9 +33,28 @@
     background-color: #ff4500;
 }
 
+.comment-upvote-button,
+.comment-downvote-button {
+    background-color: grey;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upvote-button:hover {
+    background-color: #ff4500;
+}
+
+.downvote-button:hover {
+    background-color: #ff4500;
+}
+
 .upvotes {
     background-color: #e0f7fa;
-    border-radius: 10px; /* Adjust the value for more or less rounded edges */
+    font-size: 12px;
+    border-radius: 5px; /* Adjust the value for more or less rounded edges */
     padding: 5px 10px;  /* Add some padding for better spacing inside the box */
     display: inline-block; /* Ensure it doesn't stretch */
 }
