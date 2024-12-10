@@ -5,6 +5,7 @@ import Welcome from "./Welcome";
 import Login from "./Login";
 import Banner from "./Banner";
 import NavBar from "./NavBar";
+import Home from "./Home";
 import NewPostPage from "./NewPostPage";
 import ErrorBoundary from "./ErrorBoundary";
 import "../stylesheets/phreddit.css";
@@ -59,6 +60,15 @@ export default function Phreddit() {
                 <Route path="/" element={<Welcome/>}/>
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/login" element={<Login onLogin={handleLogin}/>} />
+                <Route 
+                  path="/home" 
+                  element={
+                    <Home
+                      isLoggedIn={isLoggedIn}
+                      userId={isLoggedIn?user.id : null}
+                    />
+                  }
+                />
                 <Route 
                   path="/new-post" 
                   element={<NewPostPage 

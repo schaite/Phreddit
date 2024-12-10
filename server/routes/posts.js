@@ -60,6 +60,7 @@ router.post('/', async (req, res) => {
         linkFlairID: linkFlairID || null,
         commentIDs: [],
         views: 0,
+        vote: 0,
     });
 
     try {
