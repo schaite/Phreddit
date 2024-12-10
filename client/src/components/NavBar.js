@@ -15,12 +15,12 @@ function NavBar({ isLoggedIn, userId }) {
                 if (isLoggedIn && userId) {
                     // Use the `/user-communities/:userId` endpoint to fetch joined communities
                     const joinedResponse = await axios.get(
-                        `http://localhost:8000/api/communities/user-communities/${userId}`
+                        `/api/communities/user-communities/${userId}`
                     );
                     const joinedCommunities = joinedResponse.data;
 
                     // Fetch all communities
-                    const allResponse = await axios.get("http://localhost:8000/api/communities");
+                    const allResponse = await axios.get("/api/communities");
                     const allCommunities = allResponse.data;
 
                     // Sort communities: joined at the top
@@ -39,7 +39,7 @@ function NavBar({ isLoggedIn, userId }) {
                     setCommunities(sortedCommunities);
                 } else {
                     // If not logged in, fetch all communities and sort alphabetically
-                    const response = await axios.get("http://localhost:8000/api/communities");
+                    const response = await axios.get("/api/communities");
                     const sortedCommunities = response.data.sort((a, b) => a.name.localeCompare(b.name));
                     setCommunities(sortedCommunities);
                 }

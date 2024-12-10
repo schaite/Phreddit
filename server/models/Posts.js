@@ -34,6 +34,11 @@ const postSchema = new mongoose.Schema({
         type:Number,
         required:true,
         default: 0
+    },
+    vote:{
+        type: Number,
+        required: true,
+        default: 0
     }
 });
 
