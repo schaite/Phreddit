@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const Comment = require('../models/Comments');
+const User = require('../models/Users');
 
 // GET all comments
 router.get('/', async (req, res) => {
@@ -99,6 +100,47 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// PUT - Vote on a comment
+router.put('/:id/vote', async (req, res) => {
+  const { id } = req.params;
+  const { type, userId } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid Comment ID' });
+  }
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid User ID' });
+  }
+
+  try {
+      const comment = await Comment.findById(id).populate('commentedBy');
+      if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+      const voter = await User.findById(userId);
+      if (!voter) return res.status(404).json({ message: 'User not found' });
+
+      // Check voter's reputation
+      if (voter.reputation < 50) {
+          return res.status(403).json({ message: 'User does not have enough reputation to vote' });
+      }
+
+      // Update vote count and user's reputation
+      const increment = type === 'upvote' ? 1 : -1;
+      const reputationChange = type === 'upvote' ? 5 : -10;
+
+      comment.vote += increment;
+      comment.commentedBy.reputation += reputationChange;
+
+      await comment.save();
+      await comment.commentedBy.save();
+
+      res.json({ vote: comment.vote });
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
 
 // DELETE a comment by ID
 router.delete('/:id', async (req, res) => {

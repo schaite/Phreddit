@@ -1,13 +1,36 @@
-import React from "react";
+import React, {useState} from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { formatTimestamp } from "./Timestamp";
 import '../stylesheets/Comment.css';
 
 const Comment = ({ comment, comments, postID, indentLevel = 0, isLoggedIn}) => {
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate(); 
 
     const handleReplyClick = () => {
         navigate(`/post/${postID}/new-comment?parent=${comment._id}`);
+    };
+
+    const handleVote = async (type) => {
+        if (!isLoggedIn) {
+            setErrorMessage('You need to be logged in to vote.');
+            return;
+        }
+
+        try {
+            const response = await axios.put(`/api/comments/${comment._id}/vote`, {
+                type,
+                userId: JSON.parse(localStorage.getItem("user")).id,
+            });
+
+            // Update comment vote count locally
+            comment.vote = response.data.vote;
+            setErrorMessage('');
+        } catch (error) {
+            setErrorMessage(error.response?.data?.message || "An error occurred while voting.");
+            alert(error.response?.data?.message || "An error occurred while voting.");
+        }
     };
 
     const renderReplies = (commentIDs, level) => {
@@ -38,9 +61,20 @@ const Comment = ({ comment, comments, postID, indentLevel = 0, isLoggedIn}) => {
             </p>
 
             {isLoggedIn ? (
-                <button className="reply-button" onClick={handleReplyClick}>
-                    Reply
-                </button>
+                <>
+                    <div className="comment-buttons">
+                        <button className="comment-upvote-button" onClick={() => handleVote("upvote")}>
+                            Upvote
+                        </button>
+                        <button className="comment-downvote-button" onClick={() => handleVote("downvote")}>
+                            Downvote
+                        </button>
+                        <button className="reply-button" onClick={handleReplyClick}>
+                            Reply
+                        </button>
+                    </div>
+                </>
+                
             ) : (
                 ''
             )}

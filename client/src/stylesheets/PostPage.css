@@ -53,3 +53,28 @@
     height: 1px;
     background-color: black;
 }
+
+.post-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.upvote-button,
+.downvote-button {
+    margin-top:20px;
+    background-color: gray;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upvote-button:hover {
+    background-color: #ff4500;
+}
+
+.downvote-button:hover {
+    background-color: #ff4500;
+}

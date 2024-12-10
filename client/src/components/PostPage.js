@@ -69,12 +69,27 @@ function PostPage({isLoggedIn}) {
         };
 
         fetchRelatedData();
-    }, [post, postID]);
+    }, [post, postID]);   
 
-    // Redirect to add comment page
-    const handleAddComment = () => {
-        window.location.href = `/post/${postID}/new-comment`;
+    const handleVote = async (type) => {
+   
+        try {
+            const response = await axios.put(`/api/posts/${postID}/vote`, {
+                type,
+                userId: JSON.parse(localStorage.getItem("user")).id,
+            });
+    
+            // Update the local post state with the new vote count
+            setPost((prevPost) => ({
+                ...prevPost,
+                vote: response.data.vote,
+            }));
+        } catch (error) {
+            console.error("Error while voting:", error);
+            alert(error.response?.data?.message || "An error occurred while voting.");
+        }
     };
+    
 
     if (error) {
         return (
@@ -103,9 +118,23 @@ function PostPage({isLoggedIn}) {
                     <span className="post-stat-item">{post.vote} Upvotes</span>
                 </p>
                 {isLoggedIn ? (
-                    <button className = "add-comment-button" onClick={() => navigate(`/post/${postID}/new-comment`)}>
-                        Add a Comment
-                    </button>
+                    <div className="post-buttons">
+                        <button
+                            className="upvote-button"
+                            onClick={() => handleVote("upvote")}
+                        >
+                            Upvote
+                        </button>
+                        <button
+                            className="downvote-button"
+                            onClick={() => handleVote("downvote")}
+                        >
+                            Downvote
+                        </button>
+                        <button className = "add-comment-button" onClick={() => navigate(`/post/${postID}/new-comment`)}>
+                            Add a Comment
+                        </button>
+                    </div>
                 ) : (
                     ''
                 )}
