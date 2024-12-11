@@ -88,7 +88,7 @@ export default function Phreddit() {
                   path="/new-post" 
                   element={<NewPostPage 
                     isLoggedIn={isLoggedIn} 
-                    userId={isLoggedIn ? user.id : null}
+                    userId={user.id}
                     />
                   }
                 />
@@ -96,7 +96,7 @@ export default function Phreddit() {
                   path="/new-community" 
                   element={
                     <NewCommunityPage 
-                      userId={isLoggedIn? user.id: null} 
+                      userId={user.id} 
                       isLoggedIn={isLoggedIn} 
                       refreshCommunities={refreshCommunities}
                     />
