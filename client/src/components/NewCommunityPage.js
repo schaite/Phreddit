@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect,useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../stylesheets/NewCommunityPage.css";
 
@@ -7,15 +7,30 @@ function NewCommunityPage({refreshCommunities}) {
   const [communityName, setCommunityName] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [communityId, setCommunityId] = useState(null); // For edit mode
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if we are in edit mode
+    const community = location.state?.community;
+    if (community) {
+      setCommunityName(community.name);
+      setDescription(community.description);
+      setCommunityId(community._id);
+      setIsEditMode(true);
+    }
+  }, [location.state]);
 
   const validateInputs = async () => {
     const newErrors = {};
 
     if (!communityName || communityName.length > 100) {
       newErrors.communityName = "Community name must not be empty or exceed 100 characters.";
-    } else {
-      // Check if the community name is unique
+    } else if (!isEditMode) {
+      // For create mode, check if the community name is unique
       try {
         const response = await axios.get(`/api/communities?name=${encodeURIComponent(communityName)}`);
         if (response.data.exists) {
@@ -38,38 +53,42 @@ function NewCommunityPage({refreshCommunities}) {
   const handleCreateCommunity = async () => {
     const isValid = await validateInputs();
     if (!isValid) return;
-
+  
     try {
       const loggedInUser = JSON.parse(localStorage.getItem("user"));
-
-      if (!loggedInUser) {
-        setErrors({ global: "User must be logged in to create a community." });
-        navigate("/welcome"); // Redirect to welcome page
-        return;
+  
+      if (isEditMode) {
+        // Update existing community
+        const updatedCommunity = {
+          name: communityName,
+          description,
+        };
+        await axios.put(`/api/communities/${communityId}`, updatedCommunity);
+        refreshCommunities();
+        navigate(`/communities/${communityId}`); // Navigate using existing communityId
+      } else {
+        // Create new community
+        const newCommunity = {
+          name: communityName,
+          description,
+          members: [loggedInUser.id],
+        };
+        const response = await axios.post("/api/communities", newCommunity);
+        const createdCommunity = response.data;
+        refreshCommunities();
+        navigate(`/communities/${createdCommunity._id}`); // Navigate using the newly created community ID
       }
-
-      const newCommunity = {
-        name: communityName,
-        description,
-        members: [loggedInUser.id],
-      };
-
-      const response = await axios.post("/api/communities", newCommunity);
-      const createdCommunity = response.data;
-
-      refreshCommunities();
-      navigate(`/communities/${createdCommunity._id}`);
     } catch (error) {
-      console.error("Error creating community:", error);
+      console.error("Error creating/updating community:", error);
       setErrors({
-        global: error.response?.data?.message || "An error occurred while creating the community.",
+        global: error.response?.data?.message || "An error occurred while creating/updating the community.",
       });
     }
-  };
+  };  
 
   return (
     <div className="new-community-view">
-      <h1>Create a New Community</h1>
+      <h1>{isEditMode ? "Edit Community" : "Create a New Community"}</h1>
 
       {/* Global Error */}
       {errors.global && <p className="error">{errors.global}</p>}
@@ -105,7 +124,7 @@ function NewCommunityPage({refreshCommunities}) {
 
       {/* Submit Button */}
       <button id="engender-community" onClick={handleCreateCommunity}>
-        Create Community
+        {isEditMode ? "Update Community" : "Create Community"}
       </button>
     </div>
   );

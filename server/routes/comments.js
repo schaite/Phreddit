@@ -45,6 +45,75 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Endpoint to find the post ID for a given comment or reply
+router.get('/:id/find-post', async (req, res) => {
+  const { id } = req.params;
+
+  // Validate the comment ID
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid Comment ID' });
+  }
+
+  try {
+    // Recursive function to find the root post for a comment
+    const findPostForComment = async (commentId) => {
+      // Check if the comment exists directly in a post
+      const post = await Post.findOne({ commentIDs: commentId });
+      if (post) {
+        return post; // Return the post ID if found
+      }
+
+      // Find the parent comment for the current comment
+      const parentComment = await Comment.findOne({ commentIDs: commentId });
+      if (parentComment) {
+        return findPostForComment(parentComment._id); // Recursively check the parent comment
+      }
+
+      // If no post or parent comment is found
+      return null;
+    };
+
+    // Start the search with the given comment ID
+    const postId = await findPostForComment(id);
+
+    if (!postId) {
+      return res.status(404).json({ message: 'Post not found for this comment.' });
+    }
+
+    res.json({ postId });
+  } catch (err) {
+    res.status(500).json({ message: `Error finding post: ${err.message}` });
+  }
+});
+
+
+
+// GET all comments for a specific post in a hierarchical structure
+router.get('/post/:postId', async (req, res) => {
+  const { postId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(postId)) {
+    return res.status(400).json({ message: 'Invalid Post ID.' });
+  }
+
+  try {
+    const postComments = await Comment.find({ postId, parentCommentId: null })
+      .populate('commentedBy', 'displayName email') // Populate commenter info
+      .populate({
+        path: 'childCommentIDs',
+        populate: {
+          path: 'commentedBy',
+          select: 'displayName email', // Populate nested commenters
+        },
+      });
+
+    res.json(postComments);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching comments: ' + err.message });
+  }
+});
+
+
 // POST a new comment
 router.post('/', async (req, res) => {
   const { content, commentedBy, commentIDs } = req.body;
@@ -81,6 +150,7 @@ router.post('/', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
 // POST - Add a new comment or reply
 router.post('/add-comment', async (req, res) => {
   const { postId, parentCommentId, content, commentedBy } = req.body;
@@ -90,7 +160,7 @@ router.post('/add-comment', async (req, res) => {
     return res.status(400).json({ message: 'Content, commentedBy, and postId are required.' });
   }
 
-  // Validate ObjectId fields
+  // Validate Object IDs
   if (!mongoose.Types.ObjectId.isValid(commentedBy)) {
     return res.status(400).json({ message: 'Invalid User ID in commentedBy.' });
   }
@@ -105,20 +175,18 @@ router.post('/add-comment', async (req, res) => {
     const newComment = new Comment({
       content,
       commentedBy,
-      postId,
-      parentCommentId: parentCommentId || null,
-      childCommentIDs: [],
-      postedDate: Date.now(),
+      commentIDs: [],
+      commentedDate: new Date(),
     });
 
     const savedComment = await newComment.save();
 
+    // Update parent comment or post
     if (parentCommentId) {
       await Comment.findByIdAndUpdate(parentCommentId, {
-        $push: { childCommentIDs: savedComment._id },
+        $push: { commentIDs: savedComment._id },
       });
     } else {
-      const Post = require('../models/Posts');
       await Post.findByIdAndUpdate(postId, {
         $push: { commentIDs: savedComment._id },
       });
@@ -130,36 +198,35 @@ router.post('/add-comment', async (req, res) => {
   }
 });
 
-// PUT (update) an existing comment by ID
+
+// PUT - Update a comment by ID
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { content, commentIDs } = req.body;
+  const { content } = req.body;
 
-  // Validate ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid Comment ID' });
-  }
-
-  // Validate ObjectId for commentIDs (if provided)
-  if (commentIDs && !Array.isArray(commentIDs)) {
-    return res.status(400).json({ message: 'commentIDs must be an array of valid Comment IDs' });
   }
 
   try {
     const updatedComment = await Comment.findByIdAndUpdate(
       id,
-      { content, commentIDs },
+      { content },
       { new: true, runValidators: true }
     )
-      .populate('commentedBy', 'displayName email') // Populate commenter details
-      .populate('commentIDs', 'content commentedBy'); // Populate nested comments
+      .populate('commentedBy', 'displayName email')
+      .populate('content commentedBy');
 
-    if (!updatedComment) return res.status(404).json({ message: 'Comment not found' });
+    if (!updatedComment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
     res.json(updatedComment);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 // PUT - Vote on a comment
 router.put('/:id/vote', async (req, res) => {
@@ -202,22 +269,48 @@ router.put('/:id/vote', async (req, res) => {
 });
 
 
-// DELETE a comment by ID
+// Helper function to recursively delete child comments
+const deleteNestedComments = async (commentIds) => {
+  for (const commentId of commentIds) {
+    const comment = await Comment.findById(commentId);
+    if (comment) {
+      // Recursively delete child comments first
+      if (comment.childCommentIDs && comment.childCommentIDs.length > 0) {
+        await deleteNestedComments(comment.childCommentIDs);
+      }
+      // Delete the comment itself
+      await Comment.findByIdAndDelete(commentId);
+    }
+  }
+};
+
+// DELETE a comment by ID (and all its replies)
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
-  // Validate ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid Comment ID' });
   }
 
   try {
-    const comment = await Comment.findByIdAndDelete(id);
-    if (!comment) return res.status(404).json({ message: 'Comment not found' });
-    res.json({ message: 'Comment deleted successfully' });
+    const comment = await Comment.findById(id);
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    // Recursively delete child comments
+    if (comment.childCommentIDs && comment.childCommentIDs.length > 0) {
+      await deleteNestedComments(comment.childCommentIDs);
+    }
+
+    // Delete the comment itself
+    await Comment.findByIdAndDelete(id);
+
+    res.json({ message: 'Comment and its replies deleted successfully.' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 module.exports = router;
