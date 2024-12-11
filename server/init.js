@@ -103,6 +103,7 @@ function createUser(userObj) {
             hashedPassword,
             reputation: userObj.reputation || 100,
             role: userObj.role || "user", // Ensure role is a string
+            memberSince: userObj.memberSince || Date.now(), // Use provided date or default to now
         });
         return newUserDoc.save();
     });
@@ -172,7 +173,8 @@ async function initializeDB() {
         lastName: 'Smith',
         password: 'securePass1',
         reputation: 150,
-        role: 'user'
+        role: 'user',
+        memberSince: '2024-01-01T00:00:00.000Z',
     };
     const userRef1 = await createUser(user1);
 
@@ -183,7 +185,8 @@ async function initializeDB() {
         lastName: 'Jones',
         password: 'securePass2',
         reputation: 120,
-        role: 'user'
+        role: 'user',
+        memberSince: '2024-02-15T00:00:00.000Z',
     };
     const userRef2 = await createUser(user2);
 
@@ -194,7 +197,8 @@ async function initializeDB() {
         lastName: 'Howard',
         password: 'securePass3',
         reputation: 100,
-        role: 'user'
+        role: 'user',
+        "memberSince": '2024-03-10T00:00:00.000Z'
     };
     const userRef3 = await createUser(user3);
 
@@ -205,7 +209,8 @@ async function initializeDB() {
         lastName: 'Foot',
         password: 'securePass4',
         reputation: 110,
-        role: 'user'
+        role: 'user',
+        memberSince: '2024-04-20T00:00:00.000Z',
     };
     const userRef4 = await createUser(user4);
 
@@ -216,7 +221,8 @@ async function initializeDB() {
         lastName: 'Truth',
         password: 'securePass5',
         reputation: 95,
-        role: 'user'
+        role: 'user',
+        memberSince: '2024-05-05T00:00:00.000Z',
     };
     const userRef5 = await createUser(user5);
 
@@ -227,7 +233,8 @@ async function initializeDB() {
         lastName: 'Nutz',
         password: 'securePass6',
         reputation: 130,
-        role: 'user'
+        role: 'user',
+        memberSince: '2024-06-18T00:00:00.000Z'
     };
     const userRef6 = await createUser(user6);
 

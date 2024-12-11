@@ -37,6 +37,9 @@ function Banner({ isLoggedIn,userDisplayName, onLogout }) {
         navigate("/");
     }
 
+    const handleProfileClick = () => {
+        navigate("/profile");
+    }
     return (
         <div>
             <header id="banner" className="banner">
@@ -63,6 +66,7 @@ function Banner({ isLoggedIn,userDisplayName, onLogout }) {
                     <button 
                         className="profile-button"
                         disabled={!isLoggedIn} // Disabled for guests
+                        onClick={isLoggedIn ? handleProfileClick : null}
                     >
                         {isLoggedIn ? userDisplayName : "Guest"}
                     </button>

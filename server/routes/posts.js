@@ -4,18 +4,29 @@ const router = express.Router();
 const Post = require('../models/Posts');
 const User = require('../models/Users');
 
-//GET all posts
-router.get('/', async (req, res)=>{
-    try{
-        const posts = await Post.find()
+// GET all posts or posts by a specific user
+router.get('/', async (req, res) => {
+    const { userId } = req.query;
+
+    try {
+        let query = {};
+        if (userId) {
+            if (!mongoose.Types.ObjectId.isValid(userId)) {
+                return res.status(400).json({ message: "Invalid User ID" });
+            }
+            query.postedBy = userId; // Filter by user ID if provided
+        }
+
+        const posts = await Post.find(query)
             .populate('postedBy', 'displayName email')
             .populate('linkFlairID', 'content')
             .populate('commentIDs');
         res.json(posts);
-    } catch(err){
-        res.status(500).json({message: err.message});
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching posts." });
     }
 });
+
 
 // GET post by ID
 router.get('/:id', async(req, res)=>{

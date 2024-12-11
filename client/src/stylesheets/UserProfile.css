@@ -1,0 +1,92 @@
+/* User Profile Page */
+.user-profile {
+    flex-grow: 1;
+    padding: 20px;
+    max-height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    background-color: #f9f9f9; /* Light gray background */
+    border-radius: 10px; /* Rounded edges for the container */
+}
+
+.user-profile h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    color: #1a1919; /* Dark gray for heading */
+}
+
+.profile-info {
+    background-color: #e6e6e6; /* Light gray background for profile info */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.profile-info p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #1a1919; /* Medium gray for text */
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    padding: 10px 15px;
+    background-color: grey;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tabs button.active {
+    background-color: #ff4500; /* Reddish-orange for active tab */
+    color: white;
+    font-weight: bold;
+}
+
+.tabs button:hover {
+    background-color: #ff6d3d; /* Slightly lighter orange on hover */
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.list-item {
+    background-color: #ffffff; /* White background for each item */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for items */
+    border: 1px solid #ddd; /* Light border for separation */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.list-item:hover {
+    background-color: #f0f0f0; /* Slightly darker background on hover */
+}
+
+.list-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #333; /* Dark gray for text */
+}
+
+/* Error message styling */
+.error-message {
+    background-color: #ffe6e6; /* Light red background */
+    color: #990000; /* Dark red text */
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
