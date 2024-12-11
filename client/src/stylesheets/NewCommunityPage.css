@@ -1,45 +1,86 @@
-.new-community-view{
-    display: block;
-    padding: 20px;
+.new-community-view {
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+    height: fit-content;
 }
 
-.new-community-view h1{
+.new-community-view h1 {
+    text-align: center;
+    margin-bottom: 30px;
     font-size: 24px;
+    font-weight: bold;
+    color: #333;
 }
 
 .new-community-view div {
-    margin-bottom: 15px;;
+    width: 100%; /* Ensures all elements have the same width */
+    margin-bottom: 20px; /* Increased gap between elements */
 }
 
-.new-community-view label {
-    display:block;
-    margin-bottom: 5px;
+.new-community-view p {
+    color: red;
+    font-size: 14px;
+    margin: 10px 0;
+    text-align: center;
 }
 
-.new-community-view input, .new-community-view textarea {
+.new-community-view form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
-    padding:10px;
+}
+
+.new-community-view input,
+.new-community-view textarea {
+    padding: 15px;
+    font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
 
-#engender-community{
+.new-community-view input:focus,
+.new-community-view textarea:focus {
+    border-color: #ff4500;
+    outline: none;
+}
+
+.new-community-view button {
     background-color: grey;
-    color:white;
-    border:none;
-    padding: 10px 20px;
+    color: white;
+    padding: 12px 20px;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    width: 100%;
 }
 
-#engender-community:hover{
+.new-community-view button:hover {
     background-color: #ff4500;
 }
 
-.error{
-    color:red;
-    font-size:12px;
-    margin-top:5px;
+.new-community-view .error {
+    color: red;
+    font-size: 12px;
+    margin-top: -10px;
     margin-left: 5px;
-    display: block;
 }
+
