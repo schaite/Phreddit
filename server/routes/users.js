@@ -81,6 +81,7 @@ router.post('/register', async (req, res) => {
       firstName,
       lastName,
       hashedPassword,
+      memberSince: memberSince || Date.now(), // Use provided date or default to current date
     });
 
     await newUser.save();

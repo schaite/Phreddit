@@ -5,28 +5,36 @@ const Community = require('../models/Communities');
 const User = require('../models/Users'); 
 const Post = require('../models/Posts'); 
 
+// GET all communities, filter by name or userId (optional)
+router.get('/', async (req, res) => {
+    const { name, userId } = req.query;
 
-
-//GET all communityies
-router.get('/', async (req,res)=>{
-    const {name} = req.query;
-    if(name){
-        try{
-            const community = await Community.findOne({name});
-            return res.json({exits: !!community});
-        }catch(err){
-            return res.status(500).json({message: 'Server error. Please try again'});
+    try {
+        // If `name` is provided, search for a community by name
+        if (name) {
+            const community = await Community.findOne({ name });
+            return res.json({ exists: !!community });
         }
-    }
-    try{
-        const communities = await Community.find()
-            .populate('members', 'displayName email')
-            .populate('postIDs');
+
+        // If `userId` is provided, filter communities by membership
+        let query = {};
+        if (userId) {
+            if (!mongoose.Types.ObjectId.isValid(userId)) {
+                return res.status(400).json({ message: "Invalid User ID" });
+            }
+            query.members = userId;
+        }
+
+        // Fetch all communities or filtered communities
+        const communities = await Community.find(query)
+            .populate('members', 'displayName email') // Populate members
+            .populate('postIDs', 'title content'); // Populate posts
         return res.json(communities);
-    }catch (err){
-        return res.status(500).json({message: err.message});
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
     }
 });
+
 
 //GET a community by ID
 router.get('/:id', async (req,res)=>{

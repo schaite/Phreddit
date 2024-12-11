@@ -12,6 +12,7 @@ import "../stylesheets/phreddit.css";
 import NewCommunityPage from "./NewCommunityPage";
 import PostPage from "./PostPage";
 import NewCommentPage from "./NewCommentPage";
+import UserProfile from "./UserProfile";
 
 export default function Phreddit() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -110,6 +111,15 @@ export default function Phreddit() {
                       userId={isLoggedIn ? user.id : null}
                     />
                   }
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                      <UserProfile 
+                           userId={isLoggedIn ? user.id : null} 
+                          isLoggedIn={isLoggedIn}
+                      />
+                    }
                 />
               </Routes>
           </div>
