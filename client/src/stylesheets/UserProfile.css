@@ -62,12 +62,14 @@
 }
 
 .list-item {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: space-between; /* Space between name and buttons */
     background-color: #ffffff; /* White background for each item */
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for items */
     border: 1px solid #ddd; /* Light border for separation */
-    cursor: pointer;
     transition: background-color 0.3s;
 }
 
@@ -77,8 +79,27 @@
 
 .list-item p {
     margin: 0;
-    font-size: 14px;
+    font-size: 16px; /* Adjust font size for better readability */
     color: #333; /* Dark gray for text */
+    flex: 1; /* Allow text to take up available space */
+}
+
+.list-item button {
+    margin-left: 10px; /* Add spacing between buttons */
+    padding: 5px 10px;
+    background-color: #ff4500;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.list-item button:hover {
+    background-color: #e63900;
+}
+
+.list-item button:first-child {
+    margin-left: 0; /* No margin for the first button */
 }
 
 /* Error message styling */

@@ -118,6 +118,7 @@ export default function Phreddit() {
                       <UserProfile 
                            userId={isLoggedIn ? user.id : null} 
                           isLoggedIn={isLoggedIn}
+                          refreshCommunities={refreshCommunities}
                       />
                     }
                 />

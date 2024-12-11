@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const Post = require('../models/Posts');
 const User = require('../models/Users');
+const Comment = require('../models/Comments');
 
 // GET all posts or posts by a specific user
 router.get('/', async (req, res) => {
@@ -162,7 +163,24 @@ router.put('/:id/vote', async (req, res) => {
     }
 });
 
-// DELETE a post by ID
+// Helper function to recursively delete comments and their replies
+const deleteCommentsRecursively = async (commentIds) => {
+    for (const commentId of commentIds) {
+        const comment = await Comment.findById(commentId);
+
+        if (comment) {
+            // Recursively delete replies first
+            if (comment.commentIDs && comment.commentIDs.length > 0) {
+                await deleteCommentsRecursively(comment.commentIDs);
+            }
+
+            // Delete the comment itself
+            await Comment.findByIdAndDelete(commentId);
+        }
+    }
+};
+
+// DELETE a post by ID along with associated comments and nested replies
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -172,12 +190,26 @@ router.delete('/:id', async (req, res) => {
     }
 
     try {
-        const post = await Post.findByIdAndDelete(id);
-        if (!post) return res.status(404).json({ message: 'Post not found' });
-        res.json({ message: 'Post deleted successfully' });
+        // Find the post to delete
+        const post = await Post.findById(id);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Delete associated comments and their nested replies
+        if (post.commentIDs && post.commentIDs.length > 0) {
+            await deleteCommentsRecursively(post.commentIDs);
+        }
+
+        // Delete the post itself
+        await post.deleteOne();
+
+        res.json({ message: 'Post and associated comments (including nested replies) deleted successfully' });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: 'Error deleting post: ' + err.message });
     }
 });
+
 
 module.exports = router; 

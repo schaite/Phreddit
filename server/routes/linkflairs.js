@@ -29,22 +29,22 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST a new link flair
 router.post('/', async (req, res) => {
   const { content } = req.body;
-  if (!content) {
-    return res.status(400).json({ message: 'Content is required' });
+
+  if (!content || content.length > 30) {
+      return res.status(400).json({ message: 'Content is required and must not exceed 30 characters.' });
   }
-  const linkFlair = new LinkFlair({
-    content: content,
-  });
+
   try {
-    const newLinkFlair = await linkFlair.save();
-    res.status(201).json(newLinkFlair);
+      const linkFlair = new LinkFlair({ content });
+      const savedFlair = await linkFlair.save();
+      res.status(201).json(savedFlair);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+      res.status(500).json({ message: 'Error creating link flair: ' + err.message });
   }
 });
+
 
 // PUT (update) an existing link flair by ID
 router.put('/:id', async (req, res) => {

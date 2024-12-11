@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../stylesheets/NewPostPage.css";
 
 function NewPostPage({ userId }) {
-  const [communities, setCommunities] = useState([]);
-  const [linkFlairs, setLinkFlairs] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false); // State for edit mode
+  const [postId, setPostId] = useState(null);          // State for post ID in edit mode
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [selectedCommunity, setSelectedCommunity] = useState("");
   const [selectedFlair, setSelectedFlair] = useState("");
   const [newFlair, setNewFlair] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [errors, setErrors] = useState({});
+  const [communities, setCommunities] = useState([]);
+  const [linkFlairs, setLinkFlairs] = useState([]);
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchCommunities = async () => {
@@ -59,56 +62,84 @@ function NewPostPage({ userId }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  useEffect(() => {
+    const post = location.state?.post;
+
+    const fetchCommunityForPost = async (postId) => {
+        try {
+            const response = await axios.get(`/api/communities?postId=${postId}`);
+            if (response.data.length > 0) {
+                setSelectedCommunity(response.data[0]._id); // Set community ID in the dropdown
+            } else {
+                console.error("No community found for this post.");
+            }
+        } catch (error) {
+            console.error("Error fetching community for post:", error.message);
+        }
+    };
+
+    if (post) {
+        setTitle(post.title);
+        setContent(post.content);
+        setSelectedFlair(post.linkFlairID?._id || '');
+        setPostId(post._id);
+        setIsEditMode(true);
+
+        // Fetch and set the community ID
+        if (!post.communityId) {
+            fetchCommunityForPost(post._id);
+        } else {
+            setSelectedCommunity(post.communityId); // Use the existing communityId if available
+        }
+    }
+  }, [location.state]);
+
+
+
+  const createNewFlair = async (content) => {
+    try {
+        const response = await axios.post('/api/linkflairs', { content });
+        console.log('Created flair:', response.data); // Debugging
+    } catch (error) {
+        console.error('Error creating new flair:', error);
+        return null;
+    }
+  };
+
   const handleSubmit = async () => {
     if (!validateInputs()) return;
 
-    // const communityName = communities.find(
-    //   (c) => c._id === selectedCommunity
-    // )?.name;
-
-    const newPost = {
-      title,
-      content,
-      postedBy: userId, // Automatically assign logged-in user's ID
-      linkFlairID: newFlair ? await createNewFlair(newFlair) : selectedFlair, // Adjusted flair logic
-      postedDate: new Date().toISOString(),
-      views: 0,
-      commentIDs: [],
-      vote:0,
-    };
-
     try {
-      // Step 1: Create a new post
-      const postResponse = await axios.post("/api/posts", newPost);
-      const createdPost = postResponse.data;
-    
+        const flairId = newFlair ? await createNewFlair(newFlair) : selectedFlair;
 
-      // Step 2: Update the selected community to add the new post ID
-      await axios.put(`/api/communities/${selectedCommunity}`, {
-        $push: { postIDs: createdPost._id },
-      });
+        if (isEditMode) {
+            const updatedPost = { title, content, linkFlairID: flairId };
+            await axios.put(`/api/posts/${postId}`, updatedPost);
+        } else {
+            const newPost = {
+                title,
+                content,
+                postedBy: userId,
+                linkFlairID: flairId,
+            };
+            const postResponse = await axios.post('/api/posts', newPost);
+            const createdPost = postResponse.data;
 
-      // Redirect to the Home Page using useNavigate
-      navigate("/home");
+            if (selectedCommunity) {
+                await axios.put(`/api/communities/${selectedCommunity}`, {
+                    $push: { postIDs: createdPost._id },
+                });
+            }
+        }
+        navigate('/home');
     } catch (error) {
-      console.error("Error submitting post:", error);
+        console.error('Error submitting post:', error);
     }
-  };
-
-  // Helper function to create a new flair if needed
-  const createNewFlair = async (content) => {
-    try {
-      const response = await axios.post("/api/linkflairs", { content });
-      return response.data._id; // Return the new flair ID
-    } catch (error) {
-      console.error("Error creating new flair:", error);
-      return null;
-    }
-  };
+};
 
   return (
     <div className="new-post-page-view">
-      <h2>Create a New Post</h2>
+      <h2>{isEditMode ? "Edit Post" : "Create a New Post"}</h2>
 
       {/* Community Selection */}
       <label>
@@ -177,7 +208,7 @@ function NewPostPage({ userId }) {
       {errors.content && <p className="error">{errors.content}</p>}
 
       {/* Submit Button */}
-      <button onClick={handleSubmit}>Submit Post</button>
+      <button onClick={handleSubmit}>{isEditMode ? "Update Post" : "Create Post"}</button>
     </div>
   );
 }
