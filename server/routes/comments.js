@@ -5,17 +5,28 @@ const Comment = require('../models/Comments');
 const User = require('../models/Users');
 const Post = require('../models/Posts');
 
-// GET all comments
+// GET all comments or comments by a specific user
 router.get('/', async (req, res) => {
+  const { userId } = req.query;
+
   try {
-    const comments = await Comment.find()
+    let query = {};
+    if (userId) {
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: "Invalid User ID" });
+      }
+      query.commentedBy = userId; // Filter by userId if provided
+    }
+
+    const comments = await Comment.find(query)
       .populate('commentedBy', 'displayName email')
       .populate('commentIDs', 'content commentedBy');
     res.json(comments);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error fetching comments." });
   }
 });
+
 
 // GET a specific comment by ID
 router.get('/:id', async (req, res) => {
