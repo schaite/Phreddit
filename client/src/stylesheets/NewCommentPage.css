@@ -1,0 +1,43 @@
+.new-comment-page {
+    padding: 20px;
+  }
+  
+  .new-comment-page h1 {
+    font-size: 24px;
+  }
+  
+  .new-comment-page div {
+    margin-bottom: 15px;
+  }
+  
+  .new-comment-page label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .new-comment-page input, .new-comment-page textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .new-comment-page button {
+    background-color: grey;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .new-comment-page button:hover {
+    background-color: #ff4500;
+  }
+  
+  .error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
