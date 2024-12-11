@@ -1,26 +1,28 @@
 // Run this script to launch the server.
 // The server should run on localhost port 8000.
 // This is where you should start writing server-side code for this application.
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-port = 8000;
+const port = 8000;
 
 app.use(cors());
 
 mongoose.connect('mongodb://127.0.0.1:27017/phreddit', {
     serverSelectionTimeoutMS: 10000, // 10 seconds
 });
-  
+
 const db = mongoose.connection;
 db.on('connected', () => console.log('Connected to MongoDB successfully'));
 db.on('error', (error) => console.error('MongoDB connection error:', error));
 db.on('disconnected', () => console.log('Database instance disconnected.'));
-  
+
 app.use(express.json());
 
+// Import routes
 const communityRoutes = require('./routes/communities');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
@@ -36,19 +38,25 @@ app.get("/", function (req, res) {
     res.send("Hello Phreddit!");
 });
 
-const server = app.listen(port, () => {
-    console.log(`Server listening on port ${port}...`);
-});
+// Start server only if not in test mode
+if (process.env.NODE_ENV !== 'test') {
+    const server = app.listen(port, () => {
+        console.log(`Server listening on port ${port}...`);
+    });
 
-//This give the terminating message
-process.on('SIGINT', async () => {
-    console.log('\nServer is shutting down...');
-    try {
-        await db.close(); 
-        console.log('Server closed. Database instance disconnected.');
-        process.exit(0);
-    } catch (error) {
-        console.error('Error during disconnect:', error);
-        process.exit(1);
-    }
-});
+    // This give the terminating message
+    process.on('SIGINT', async () => {
+        console.log('\nServer is shutting down...');
+        try {
+            await db.close();
+            console.log('Server closed. Database instance disconnected.');
+            process.exit(0);
+        } catch (error) {
+            console.error('Error during disconnect:', error);
+            process.exit(1);
+        }
+    });
+}
+
+// Export the app for testing
+module.exports = app;
