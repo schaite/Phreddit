@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const Comment = require('../models/Comments');
 const User = require('../models/Users');
+const Post = require('../models/Posts');
 
 // GET all comments
 router.get('/', async (req, res) => {
@@ -67,6 +68,54 @@ router.post('/', async (req, res) => {
     res.status(201).json(populatedComment);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+// POST - Add a new comment or reply
+router.post('/add-comment', async (req, res) => {
+  const { postId, parentCommentId, content, commentedBy } = req.body;
+
+  // Validate required fields
+  if (!content || !commentedBy || !postId) {
+    return res.status(400).json({ message: 'Content, commentedBy, and postId are required.' });
+  }
+
+  // Validate ObjectId fields
+  if (!mongoose.Types.ObjectId.isValid(commentedBy)) {
+    return res.status(400).json({ message: 'Invalid User ID in commentedBy.' });
+  }
+  if (!mongoose.Types.ObjectId.isValid(postId)) {
+    return res.status(400).json({ message: 'Invalid Post ID.' });
+  }
+  if (parentCommentId && !mongoose.Types.ObjectId.isValid(parentCommentId)) {
+    return res.status(400).json({ message: 'Invalid Parent Comment ID.' });
+  }
+
+  try {
+    const newComment = new Comment({
+      content,
+      commentedBy,
+      postId,
+      parentCommentId: parentCommentId || null,
+      childCommentIDs: [],
+      postedDate: Date.now(),
+    });
+
+    const savedComment = await newComment.save();
+
+    if (parentCommentId) {
+      await Comment.findByIdAndUpdate(parentCommentId, {
+        $push: { childCommentIDs: savedComment._id },
+      });
+    } else {
+      const Post = require('../models/Posts');
+      await Post.findByIdAndUpdate(postId, {
+        $push: { commentIDs: savedComment._id },
+      });
+    }
+
+    res.status(201).json(savedComment);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
