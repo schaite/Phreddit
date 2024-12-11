@@ -48,6 +48,8 @@ function Home({isLoggedIn, userId}) {
                         ...post,
                         communityName: community ? community.name : null,
                         linkFlair: linkFlair ? linkFlair.content : null,
+                        postedBy: post.postedBy ? post.postedBy : { displayName: "Unknown User" },
+                        
                     };
                 });
                 const userCommunityPostIDs = userCommunities
