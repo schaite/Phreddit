@@ -1,90 +1,115 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../stylesheets/NewCommunityPage.css";
 
-function NewCommunityPage({ userId, userDisplayName, isLoggedIn }) {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+function NewCommunityPage({refreshCommunities}) {
+  const [communityName, setCommunityName] = useState("");
+  const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+  const validateInputs = async () => {
+    const newErrors = {};
 
-        // Validation
-        if (!name.trim()) {
-            setError("Community name is required and cannot be empty.");
-            return;
+    if (!communityName || communityName.length > 100) {
+      newErrors.communityName = "Community name must not be empty or exceed 100 characters.";
+    } else {
+      // Check if the community name is unique
+      try {
+        const response = await axios.get(`/api/communities?name=${encodeURIComponent(communityName)}`);
+        if (response.data.exists) {
+          newErrors.communityName = "Community name already exists.";
         }
-        if (name.length > 100) {
-            setError("Community name cannot exceed 100 characters.");
-            return;
-        }
-        if (!description.trim()) {
-            setError("Community description is required and cannot be empty.");
-            return;
-        }
-        if (description.length > 500) {
-            setError("Community description cannot exceed 500 characters.");
-            return;
-        }
+      } catch (error) {
+        console.error("Error checking community name uniqueness:", error);
+        newErrors.communityName = "Unable to verify community name.";
+      }
+    }
 
-        // Prepare the community object
-        const community = {
-            name,
-            description,
-            createdBy: userId,
-            members: [userId],
-        };
+    if (!description || description.length > 500) {
+      newErrors.description = "Description must not be empty or exceed 500 characters.";
+    }
 
-        // Submit the community
-        fetch("/api/communities", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(community),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status === 409) {
-                    throw new Error("Community name already exists.");
-                } else {
-                    throw new Error("Failed to create the community.");
-                }
-            })
-            .then((data) => {
-                alert("Community created successfully!");
-                navigate(`/community/${data._id}`); // Redirect to the new community's view page
-            })
-            .catch((err) => setError(err.message));
-    };
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    return (
-        <div className="new-community-page">
-            <h1>Create a New Community</h1>
-            {error && <p className="error-message">{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Community Name (required, max 100 characters):
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </label>
-                <label>
-                    Description (required, max 500 characters):
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    ></textarea>
-                </label>
-                <button type="submit">Engender Community</button>
-            </form>
-        </div>
-    );
+  const handleCreateCommunity = async () => {
+    const isValid = await validateInputs();
+    if (!isValid) return;
+
+    try {
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+
+      if (!loggedInUser) {
+        setErrors({ global: "User must be logged in to create a community." });
+        navigate("/welcome"); // Redirect to welcome page
+        return;
+      }
+
+      const newCommunity = {
+        name: communityName,
+        description,
+        members: [loggedInUser.id],
+      };
+
+      const response = await axios.post("/api/communities", newCommunity);
+      const createdCommunity = response.data;
+
+      refreshCommunities();
+      navigate(`/communities/${createdCommunity._id}`);
+    } catch (error) {
+      console.error("Error creating community:", error);
+      setErrors({
+        global: error.response?.data?.message || "An error occurred while creating the community.",
+      });
+    }
+  };
+
+  return (
+    <div className="new-community-view">
+      <h1>Create a New Community</h1>
+
+      {/* Global Error */}
+      {errors.global && <p className="error">{errors.global}</p>}
+
+      {/* Community Name Input */}
+      <div>
+        <label>
+          Community Name<span className="required">(Required)</span>
+        </label>
+        <input
+          type="text"
+          value={communityName}
+          onChange={(e) => setCommunityName(e.target.value)}
+          maxLength="100"
+          placeholder="Enter community name"
+        />
+        {errors.communityName && <p className="error">{errors.communityName}</p>}
+      </div>
+
+      {/* Description Input */}
+      <div>
+        <label>
+          Description<span className="required">(Required)</span>
+        </label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          maxLength="500"
+          placeholder="Enter community description"
+        />
+        {errors.description && <p className="error">{errors.description}</p>}
+      </div>
+
+      {/* Submit Button */}
+      <button id="engender-community" onClick={handleCreateCommunity}>
+        Create Community
+      </button>
+    </div>
+  );
 }
 
 export default NewCommunityPage;
+

@@ -9,13 +9,22 @@ const Post = require('../models/Posts');
 
 //GET all communityies
 router.get('/', async (req,res)=>{
+    const {name} = req.query;
+    if(name){
+        try{
+            const community = await Community.findOne({name});
+            return res.json({exits: !!community});
+        }catch(err){
+            return res.status(500).json({message: 'Server error. Please try again'});
+        }
+    }
     try{
         const communities = await Community.find()
             .populate('members', 'displayName email')
             .populate('postIDs');
-        res.json(communities);
+        return res.json(communities);
     }catch (err){
-        res.status(500).json({message: err.message});
+        return res.status(500).json({message: err.message});
     }
 });
 
@@ -87,10 +96,15 @@ router.post('/', async (req, res) => {
     });
   
     try {
-      const newCommunity = await community.save();
-      res.status(201).json(newCommunity); // Send the new community as the response
+        const existingCommunity = await Community.findOne({name});
+        if(existingCommunity){
+            return res.status(400).json({message: 'Community name already exists.'});
+        }
+
+        const newCommunity = await community.save();
+        res.status(201).json(newCommunity); // Send the new community as the response
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
   });  
 

@@ -3,7 +3,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylesheets/NavBar.css";
 
-function NavBar({ isLoggedIn, userId }) {
+function NavBar({ isLoggedIn, userId, refreshCommunities}) {
     const [communities, setCommunities] = useState([]);
     const location = useLocation();
     const navigate = useNavigate();
@@ -49,7 +49,7 @@ function NavBar({ isLoggedIn, userId }) {
         };
 
         fetchCommunities();
-    }, [isLoggedIn, userId]); // Update when login status or user ID changes
+    }, [isLoggedIn, userId, refreshCommunities]); // Update when login status or user ID changes
 
     const handleCreateCommunityClick = () => {
         if (isLoggedIn) {

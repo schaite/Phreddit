@@ -1,47 +1,45 @@
-.new-community-page {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.new-community-page h1 {
-    text-align: center;
-    color: #333;
-}
-
-.new-community-page form label {
+.new-community-view{
     display: block;
-    margin: 10px 0 5px;
-    font-weight: bold;
+    padding: 20px;
 }
 
-.new-community-page form input,
-.new-community-page form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.new-community-view h1{
+    font-size: 24px;
 }
 
-.new-community-page form button {
+.new-community-view div {
+    margin-bottom: 15px;;
+}
+
+.new-community-view label {
+    display:block;
+    margin-bottom: 5px;
+}
+
+.new-community-view input, .new-community-view textarea {
     width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
+    padding:10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#engender-community{
+    background-color: grey;
+    color:white;
+    border:none;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
-.new-community-page form button:hover {
-    background-color: #0056b3;
+#engender-community:hover{
+    background-color: #ff4500;
 }
 
-.error-message {
-    color: red;
-    text-align: center;
+.error{
+    color:red;
+    font-size:12px;
+    margin-top:5px;
+    margin-left: 5px;
+    display: block;
 }

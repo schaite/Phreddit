@@ -19,6 +19,7 @@ export default function Phreddit() {
     role: "guest",
     id: null,
   });   
+  const [refreshCount, setRefreshCount] = useState(0);
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -43,6 +44,9 @@ export default function Phreddit() {
     localStorage.removeItem("user");
   }; 
 
+  const refreshCommunities = () => {
+    setRefreshCount((prevCount) => prevCount + 1);
+  }
   return (
     <ErrorBoundary>
       <Router>
@@ -56,6 +60,7 @@ export default function Phreddit() {
             <NavBar
                 isLoggedIn={isLoggedIn}
                 userId = {isLoggedIn? user.id: null}
+                refreshCommunities={refreshCommunities}
             />
               <Routes>
                 <Route path="/" element={<Welcome/>}/>
@@ -81,8 +86,8 @@ export default function Phreddit() {
                 <Route 
                   path="/new-post" 
                   element={<NewPostPage 
-                  isLoggedIn={isLoggedIn} 
-                  userId={isLoggedIn ? user.id : null}
+                    isLoggedIn={isLoggedIn} 
+                    userId={isLoggedIn ? user.id : null}
                     />
                   }
                 />
@@ -90,8 +95,9 @@ export default function Phreddit() {
                   path="/new-community" 
                   element={
                     <NewCommunityPage 
-                    userId={isLoggedIn? user.id: null} 
-                    isLoggedIn={isLoggedIn} 
+                      userId={isLoggedIn? user.id: null} 
+                      isLoggedIn={isLoggedIn} 
+                      refreshCommunities={refreshCommunities}
                     />
                   } 
                 />
