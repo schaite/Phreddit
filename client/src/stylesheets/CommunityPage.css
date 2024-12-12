@@ -1,0 +1,11 @@
+.communityPage {
+    flex-grow:1;
+    padding: 20px;
+    max-height: 100vh;
+    overflow-y:auto;
+    box-sizing: border-box;
+}
+
+.communityPage h1 {
+    font-size:24px;
+}

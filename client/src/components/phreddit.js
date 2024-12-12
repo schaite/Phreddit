@@ -13,6 +13,8 @@ import NewCommunityPage from "./NewCommunityPage";
 import PostPage from "./PostPage";
 import NewCommentPage from "./NewCommentPage";
 import UserProfile from "./UserProfile";
+import CommunityPage from "./CommunityPage";
+import SearchPage from "./SearchPage";
 
 export default function Phreddit() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -74,6 +76,20 @@ export default function Phreddit() {
                     <Home
                       isLoggedIn={isLoggedIn}
                       userId={isLoggedIn?user.id : null}
+                    />
+                  }
+                />
+                <Route
+                  path="/communities/:communityId"
+                  element={
+                    <CommunityPage/>
+                  }
+                />
+                <Route
+                  path="/search"
+                  element={<SearchPage
+                    isLoggedIn={isLoggedIn}
+                    userId={isLoggedIn?user.id : null}
                     />
                   }
                 />

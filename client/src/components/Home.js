@@ -5,11 +5,13 @@ import PostList from "./PostList.js";
 import "../stylesheets/Home.css";
 
 function Home({isLoggedIn, userId}) {
+    const [results, setResults] = useState([]);
     const [userCommunityPosts, setUserCommunityPosts] = useState([]);
     const [otherPosts, setOtherPosts] = useState([]);
     const [comments, setComments] = useState([]);
     const [order, setOrder] = useState("newest");
     const [postCount, setPostCount] = useState(0);
+    const [query, setQuery] = useState("");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
