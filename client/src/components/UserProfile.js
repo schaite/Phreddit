@@ -4,7 +4,7 @@ import axios from "axios";
 import "../stylesheets/UserProfile.css";
 import { formatTimestamp } from "./Timestamp";
 
-function UserProfile({ userId, isLoggedIn, refreshCommunities }) {
+function UserProfile({ userId, isLoggedIn, refreshCommunities, isAdmin }) {
   const [userInfo, setUserInfo] = useState({});
   const [activeTab, setActiveTab] = useState("posts");
   const [data, setData] = useState([]);
@@ -47,6 +47,8 @@ function UserProfile({ userId, isLoggedIn, refreshCommunities }) {
         return;
       } else if (type === "communities") {
         endpoint = `/api/communities/user-communities/${storedUserId}`;
+      } else if(type === "users"){
+        endpoint = `/api/users/${storedUserId}`;
       }
 
       const response = await axios.get(endpoint);
@@ -190,12 +192,22 @@ function UserProfile({ userId, isLoggedIn, refreshCommunities }) {
             >
               Comments
             </button>
+            {isAdmin ? (
+                <button
+                className={activeTab === "users" ? "active" : ""}
+                onClick={() => handleTabChange("users")}
+              >
+                Users
+              </button>
+            ) : (
+                ''
+            )}
           </div>
           <div className="list">
             {activeTab === "posts" && data.length > 0 ? (
               data.map((post) => (
                 <div key={post._id} className="list-item">
-                  <p>{post.title}</p>
+                  <p>{<strong>{post.title}</strong>}</p>
                   <button onClick={() => handleEditPost(post)}>Edit</button>
                   <button onClick={() => handleDeletePost(post._id)}>Delete</button>
                 </div>
@@ -205,7 +217,7 @@ function UserProfile({ userId, isLoggedIn, refreshCommunities }) {
             ) : activeTab === "communities" && data.length > 0 ? (
               data.map((community) => (
                 <div key={community._id} className="list-item">
-                  <p>{community.name}</p>
+                  <p><strong>{community.name}</strong></p>
                   <button onClick={() => handleEditCommunity(community)}>Edit</button>
                   <button onClick={() => handleDeleteCommunity(community._id)}>
                     Delete
@@ -216,7 +228,7 @@ function UserProfile({ userId, isLoggedIn, refreshCommunities }) {
               data.map((comment) => (
                 <div key={comment._id} className="list-item">
                   <p>
-                    {comment.postTitle}: {comment.content}...
+                    <strong>{comment.postTitle}</strong>:{comment.content?.substring(0,20)||'undefined'}{comment.content.length>20?'...':''}
                   </p>
                   <button onClick={() => handleEditComment(comment)}>Edit</button>
                   <button onClick={() => handleDeleteComment(comment._id)}>Delete</button>

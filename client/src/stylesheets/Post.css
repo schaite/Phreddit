@@ -1,0 +1,24 @@
+.post-stat {
+    border-radius: 10px; /* Same rounded edges as .upvotes */
+    padding: 5px 10px;
+    display: inline-block; /* Keeps it inline while applying spacing */
+    margin-right: 5px; /* Adds space between items */
+}
+
+/* Home page style */
+.post-stat-home {
+    background-color: rgb(255, 255, 255);
+    color: black;
+}
+
+/* Community page style */
+.post-stat-community {
+    background-color: #e0f7fa;
+    color: black;
+}
+
+/* Search page style */
+.post-stat-search {
+    background-color: rgb(255, 255, 255);
+    color: black;
+}

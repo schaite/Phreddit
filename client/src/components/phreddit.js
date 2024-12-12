@@ -24,6 +24,7 @@ export default function Phreddit() {
     id: null,
   });   
   const [refreshCount, setRefreshCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -132,9 +133,10 @@ export default function Phreddit() {
                   path="/profile" 
                   element={
                       <UserProfile 
-                           userId={isLoggedIn ? user.id : null} 
-                          isLoggedIn={isLoggedIn}
-                          refreshCommunities={refreshCommunities}
+                        userId={isLoggedIn ? user.id : null} 
+                        isLoggedIn={isLoggedIn}
+                        refreshCommunities={refreshCommunities}
+                        isAdmin={isAdmin}
                       />
                     }
                 />

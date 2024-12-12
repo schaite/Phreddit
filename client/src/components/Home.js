@@ -123,6 +123,7 @@ function Home({isLoggedIn, userId}) {
                                 order={order}
                                 showCommunityName={true}
                                 comments={comments}
+                                pageType={"home"}
                             />
                         </div>
                     )}
@@ -136,6 +137,7 @@ function Home({isLoggedIn, userId}) {
                                 order={order}
                                 showCommunityName={true}
                                 comments={comments}
+                                pageType={"home"}
                             />
                         </div>
                     )}

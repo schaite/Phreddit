@@ -162,6 +162,7 @@ function SearchPage({isLoggedIn, userId}) {
                                 order={order}
                                 showCommunityName={true}
                                 comments={comments}
+                                pageType={"search"}
                             />
                         </div>
                     )}
@@ -175,6 +176,7 @@ function SearchPage({isLoggedIn, userId}) {
                                 order={order}
                                 showCommunityName={true}
                                 comments={comments}
+                                pageType={"search"}
                             />
                         </div>
                     )}

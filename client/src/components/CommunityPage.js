@@ -3,7 +3,6 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import PostList from "./PostList.js";
 import { formatTimestamp } from "./Timestamp.js";
-import "../stylesheets/Home.css";
 import "../stylesheets/CommunityPage.css";
 
 function CommunityPage() {
@@ -14,7 +13,7 @@ function CommunityPage() {
     const [order, setOrder] = useState("newest");
     const [postCount, setPostCount] = useState(0);
     const [error, setError] = useState(null);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -69,32 +68,34 @@ function CommunityPage() {
         fetchData();
     }, [communityId]);
 
-    // useEffect(() => {
-    //     if (error) {
-    //         setTimeout(() => {
-    //             navigate("/");
-    //         }, 2000);
-    //     }
-    // }, [error, navigate]);
+    useEffect(() => {
+        if (error) {
+            setTimeout(() => {
+                navigate("/");
+            }, 2000);
+        }
+    }, [error, navigate]);
 
     return (
-        <div id="home" className="home">
+        <div id="community-page" className="community-page">
             {error ? (
                 <p className="error-message">{error}</p>
             ) : (
                 <>
                     <div>
-                        <header className="header-container">
-                            <h1>{community.name}</h1>
-                                <div className="sorting-buttons">
-                                    <button className="sort-button" onClick={() => setOrder("newest")}>Newest</button>
-                                    <button className="sort-button" onClick={() => setOrder("oldest")}>Oldest</button>
-                                    <button className="sort-button" onClick={() => setOrder("active")}>Active</button>
-                                </div>
+                        <header className="community-header-container">
+                            <h1>{community ? community.name : "Loading..."}</h1>
+                            <div className="sorting-buttons">
+                                <button className="sort-button" onClick={() => setOrder("newest")}>Newest</button>
+                                <button className="sort-button" onClick={() => setOrder("oldest")}>Oldest</button>
+                                <button className="sort-button" onClick={() => setOrder("active")}>Active</button>
+                            </div>
                         </header>
-                        <p>{community.description}</p>
-                        <p>Created {formatTimestamp(community.startDate)}</p>
-                        <p>{postCount} posts | {community.members.length} members</p>
+                        <p>{community ? community.description : "Loading description..."}</p>
+                        <p>Created {community ? formatTimestamp(community.startDate) : "Loading date..."}</p>
+                        <p>
+                            <span className="community-stats">{postCount} posts</span><span className="community-stats">{community && community.members ? community.members.length : 0} members</span>
+                        </p>
                         <hr />
                     </div>
                     {/* Div for Posts from User's Communities */}
@@ -105,6 +106,7 @@ function CommunityPage() {
                                 order={order}
                                 showCommunityName={false}
                                 comments={comments}
+                                pageType={"community"}
                             />
                         </div>
                     )}

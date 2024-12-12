@@ -2,7 +2,7 @@ import React from "react";
 import Post from "./Post";
 import { sortPosts } from "./helper.js";
 
-function PostList({ posts, order, showCommunityName, comments}) {
+function PostList({ posts, order, showCommunityName, comments, pageType}) {
     const sortedPosts = sortPosts(posts, order, comments);
     return (
         <div id="post-list">
@@ -12,6 +12,7 @@ function PostList({ posts, order, showCommunityName, comments}) {
                     post={post}
                     showCommunityName={showCommunityName}
                     comments={comments}
+                    pageType={pageType}
                 />
             ))}
         </div>
