@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/authService';
 import "../stylesheets/Login.css";
@@ -79,6 +80,10 @@ const Login = ({onLogin}) => {
             </form>
         </div>
     );
+};
+
+Login.propTypes = {
+    onLogin: PropTypes.func.isRequired, // Validate that onLogin is a required function
 };
 
 export default Login;

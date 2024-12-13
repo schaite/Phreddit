@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from "axios";
 import PostList from "./PostList.js";
 import "../stylesheets/Home.css";
@@ -11,7 +12,7 @@ function SearchPage({isLoggedIn, userId}) {
     const [order, setOrder] = useState("newest");
     const [postCount, setPostCount] = useState(0);
     const [query, setQuery] = useState("");
-    const [error, setError] = useState(null);
+    const error = useState(null)[0];
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -116,7 +117,7 @@ function SearchPage({isLoggedIn, userId}) {
             if (queryParam) {
                 searchPostAndComments(queryParam);
             }
-        }, [searchPostAndComments]);
+        }, [searchPostAndComments,location.search]);
 
     useEffect(() => {
         if (error) {
@@ -185,5 +186,10 @@ function SearchPage({isLoggedIn, userId}) {
         </div>
     );
 }
+
+SearchPage.propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired,
+    userId: PropTypes.string.isRequired,
+};
 
 export default SearchPage;

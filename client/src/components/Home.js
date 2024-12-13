@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from "axios";
 import PostList from "./PostList.js";
 import "../stylesheets/Home.css";
 
 function Home({isLoggedIn, userId}) {
-    const [results, setResults] = useState([]);
     const [userCommunityPosts, setUserCommunityPosts] = useState([]);
     const [otherPosts, setOtherPosts] = useState([]);
     const [comments, setComments] = useState([]);
     const [order, setOrder] = useState("newest");
     const [postCount, setPostCount] = useState(0);
-    const [query, setQuery] = useState("");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -146,5 +145,11 @@ function Home({isLoggedIn, userId}) {
         </div>
     );
 }
+
+// Define PropTypes
+Home.propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired,
+    userId: PropTypes.string.isRequired,
+};
 
 export default Home;

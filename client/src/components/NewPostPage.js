@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from "axios";
 import "../stylesheets/NewPostPage.css";
 
@@ -214,5 +215,9 @@ function NewPostPage({ userId }) {
     </div>
   );
 }
+
+NewPostPage.propTypes = {
+  userId: PropTypes.string.isRequired, // Validate that userId is a required string
+};
 
 export default NewPostPage;
