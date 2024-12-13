@@ -31,21 +31,19 @@ router.get('/', async (req, res) => {
             if (!mongoose.Types.ObjectId.isValid(postId)) {
                 return res.status(400).json({ message: "Invalid Post ID" });
             }
-            query.postIDs = postId;
+            query = { postIDs: { $in: [postId] } }; // Check if postId exists in postIDs array
         }
-
+        
         // Fetch all communities or filtered communities
         const communities = await Community.find(query)
             .populate('members', 'displayName email') // Populate members
             .populate('postIDs', 'title content'); // Populate posts
 
-        return res.json(communities);
-    } catch (err) {
-        return res.status(500).json({ message: err.message });
-    }
-});
-
-
+            return res.json(communities);
+        } catch (err) {
+            return res.status(500).json({ message: err.message });
+        }
+    });
 
 //GET a community by ID
 router.get('/:id', async (req,res)=>{
@@ -58,11 +56,33 @@ router.get('/:id', async (req,res)=>{
     try{
         const community = await Community.findById(req.params.id)
             .populate('members','displayName email')
-            .populate('postIDs');
+            .populate('postIDs')
+            .populate('createdBy', 'displayName email');
         if(!community) return res.status(404).json({message: 'Community not found'});
         res.json(community);
     } catch (err) {
         res.status(500).json({message: err.message});
+    }
+});
+
+// GET - Communities a user has created
+router.get('/created-communities/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    // Validate User ID
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: "Invalid User ID" });
+    }
+
+    try {
+        const createdCommunities = await Community.find({ createdBy: userId })
+            .populate('members', 'displayName email') // Populate member details
+            .populate('postIDs', 'title content'); // Optionally populate posts
+
+        res.json(createdCommunities); // Return the communities created by the user
+    } catch (err) {
+        console.error("Error fetching created communities:", err);
+        res.status(500).json({ message: "Server error. Please try again later." });
     }
 });
 
@@ -77,7 +97,11 @@ router.get('/user-communities/:userId', async (req, res) => {
   
     try {
       // Find all communities where the user is a member
-      const joinedCommunities = await Community.find({ members: userId })
+      const joinedCommunities = await Community.find({
+        $or: [
+          { members: userId },  // Regular members
+        ]
+      })
         .populate('members', 'displayName email') // Populate member details
         .populate('postIDs', 'title content'); // Optionally populate posts
   
@@ -91,10 +115,10 @@ router.get('/user-communities/:userId', async (req, res) => {
 //POST - Create a new community
 // POST /communities - Create a new community
 router.post('/', async (req, res) => {
-    const { name, description, members, postIDs } = req.body;
+    const { name, description, members, postIDs, createdBy } = req.body;
 
     // Validate required fields
-    if (!name || !description || !Array.isArray(members)) {
+    if (!name || !description || !Array.isArray(members) || !createdBy) {
         return res.status(400).json({ message: 'Name, description, and members are required' });
     }
 
@@ -109,14 +133,15 @@ router.post('/', async (req, res) => {
       name: req.body.name,
       description: req.body.description,
       postIDs: req.body.postIDs || [],
+      createdBy: req.body.createdBy,
       members: req.body.members,
-      memberCount: req.body.members ? req.body.members.length : 0, // Initialize memberCount
+      memberCount: req.body.members ? req.body.members.length : 0, 
     });
   
     try {
         const existingCommunity = await Community.findOne({name});
         if(existingCommunity){
-            return res.status(400).json({message: 'Community name already'})
+            return res.status(400).json({message: 'Community name already exists'})
         }
 
         const newCommunity = await community.save();
@@ -184,7 +209,8 @@ router.put('/:id', async (req, res) => {
                 { new: true, runValidators: true }
             )
                 .populate('members', 'displayName email') // Populate updated member details
-                .populate('postIDs', 'title content'); // Populate updated post details
+                .populate('postIDs', 'title content') // Populate updated post details
+                .populate('createdBy', 'displayName email');
 
             if (!updatedCommunity) {
                 return res.status(404).json({ message: 'Community not found' });
@@ -195,6 +221,39 @@ router.put('/:id', async (req, res) => {
         }
     }
 });
+
+// PUT - Add or Remove Members
+router.put('/:id/members', async (req, res) => {
+    const { id } = req.params;
+    const { userId, action } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'Invalid Community ID or User ID' });
+    }
+
+    try {
+        const update = action === 'join'
+            ? { $addToSet: { members: userId }, $inc: { memberCount: 1 } }
+            : { $pull: { members: userId }, $inc: { memberCount: -1 } };
+
+        const updatedCommunity = await Community.findByIdAndUpdate(
+            id,
+            update,
+            { new: true, runValidators: true }
+        )
+            .populate('members', 'displayName email') // Populate updated member details
+            .populate('createdBy', 'displayName email'); // Populate creator details
+
+        if (!updatedCommunity) {
+            return res.status(404).json({ message: 'Community not found' });
+        }
+
+        res.json(updatedCommunity); // Send back the updated community
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 // Helper function to recursively delete comments and their replies
 const deleteCommentsRecursively = async (commentIds) => {
@@ -215,6 +274,7 @@ const deleteCommentsRecursively = async (commentIds) => {
 
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
+    const userId = req.user._id; // Assuming user ID is available in `req.user` (e.g., via middleware)   
 
     // Validate Community ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -227,6 +287,10 @@ router.delete('/:id', async (req, res) => {
         if (!community) {
             return res.status(404).json({ message: 'Community not found' });
         }
+
+        if (String(community.createdBy) !== String(userId)) {
+            return res.status(403).json({ message: 'You are not authorized to delete this community' });
+        } 
 
         // Fetch associated posts
         const posts = await Post.find({ _id: { $in: community.postIDs } });

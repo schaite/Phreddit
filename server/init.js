@@ -87,6 +87,7 @@ function createCommunity(communityObj) {
         description: communityObj.description,
         postIDs: communityObj.postIDs,
         startDate: communityObj.startDate,
+        createdBy:communityObj.createdBy,
         members: communityObj.members,
         memberCount: communityObj.memberCount,
     });
@@ -137,7 +138,7 @@ async function initializeDB() {
         lastName: adminLastName,
         password: adminPassword,
         reputation: 1000,
-        role: "admin", // Explicitly set as a string
+        role: "admin",
     };    
 
     let adminRef = await createUser(adminUser);
@@ -356,8 +357,9 @@ async function initializeDB() {
         description: 'A practical application of the principles of justice.',
         postIDs: [postRef1],
         startDate: new Date('August 10, 2014 04:18:00'),
-        members: [userRef1, userRef3, userRef8, userRef2, userRef6],
-        memberCount: 5,
+        createdBy: adminRef,
+        members: [adminRef,userRef1, userRef3, userRef8, userRef2, userRef6],
+        memberCount: 6,
     };
     const community2 = { // community object 2
         communityID: 'community2',
@@ -365,8 +367,9 @@ async function initializeDB() {
         description: 'A fantastical reimagining of our past and present.',
         postIDs: [postRef2],
         startDate: new Date('May 4, 2017 08:32:00'),
-        members: [userRef7, userRef2, userRef5, userRef4],
-        memberCount: 4,
+        createdBy:userRef3,
+        members: [userRef3,userRef7, userRef2, userRef5, userRef4],
+        memberCount: 5,
     };
     let communityRef1 = await createCommunity(community1);
     let communityRef2 = await createCommunity(community2);

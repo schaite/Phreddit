@@ -72,6 +72,7 @@ function NewCommunityPage({refreshCommunities}) {
           name: communityName,
           description,
           members: [loggedInUser.id],
+          createdBy: loggedInUser.id,
         };
         const response = await axios.post("/api/communities", newCommunity);
         const createdCommunity = response.data;

@@ -64,10 +64,12 @@ function NewPostPage({ userId }) {
 
   useEffect(() => {
     const post = location.state?.post;
+    console.log(post);
 
     const fetchCommunityForPost = async (postId) => {
         try {
             const response = await axios.get(`/api/communities?postId=${postId}`);
+            console.log("Community Response:", response.data);
             if (response.data.length > 0) {
                 setSelectedCommunity(response.data[0]._id); // Set community ID in the dropdown
             } else {

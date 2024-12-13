@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const User = require('../models/Users');
-
+const Comment = require('../models/Comments');
+const Post = require('../models/Posts');
+const Community = require('../models/Communities');
 // GET all users
 router.get('/', async (req, res) => {
   try {
@@ -81,8 +83,8 @@ router.post('/register', async (req, res) => {
       firstName,
       lastName,
       hashedPassword,
-      memberSince: memberSince || Date.now(), // Use provided date or default to current date
-    });
+      memberSince: Date.now(), // Default to the current date
+    });    
 
     await newUser.save();
     res.status(201).json({ message: 'Account created successfully.' });
@@ -120,7 +122,12 @@ router.post('/login', async (req, res) => {
     // Login successful
     res.json({
       message: 'Login successful.',
-      user: { id: user._id, displayName: user.displayName, email: user.email },
+      user: {
+        id: user._id,
+        displayName: user.displayName,
+        email: user.email,
+        role: user.role, // Include role here
+      },
     });
   } catch (err) {
     console.error('Error during login:', err.message); // Log for debugging
@@ -166,18 +173,81 @@ router.put('/:id', async (req, res) => {
 });
 
 
-// DELETE a user by ID
+// DELETE a user by ID (Admin Only)
+// Helper function to recursively delete comments and their replies
+const deleteCommentsRecursively = async (commentIds) => {
+  for (const commentId of commentIds) {
+      const comment = await Comment.findById(commentId);
+
+      if (comment) {
+          // Recursively delete replies first
+          if (comment.commentIDs && comment.commentIDs.length > 0) {
+              await deleteCommentsRecursively(comment.commentIDs);
+          }
+
+          // Delete the comment itself
+          await Comment.findByIdAndDelete(commentId);
+      }
+  }
+};
+
+// DELETE a user by ID (Admin only)
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
+
+  // Validate ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'Invalid User ID' });
+      return res.status(400).json({ message: 'Invalid User ID' });
   }
+
   try {
-    const user = await User.findByIdAndDelete(id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json({ message: 'User deleted successfully' });
+      // Find the user to delete
+      const user = await User.findById(id);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Fetch all comments made by the user
+      const userComments = await Comment.find({ commentedBy: id });
+      const commentIds = userComments.map((comment) => comment._id);
+
+      // Recursively delete comments and their replies
+      await deleteCommentsRecursively(commentIds);
+
+      // Remove references to deleted comments from posts
+      await Post.updateMany(
+          { commentIDs: { $in: commentIds } },
+          { $pull: { commentIDs: { $in: commentIds } } }
+      );
+
+      // Delete user's posts
+      const userPosts = await Post.find({ postedBy: id });
+      for (const post of userPosts) {
+          if (post.commentIDs && post.commentIDs.length > 0) {
+              await deleteCommentsRecursively(post.commentIDs);
+          }
+          await post.deleteOne();
+      }
+
+      // Delete communities created by the user
+      const userCommunities = await Community.find({ createdBy: id });
+      for (const community of userCommunities) {
+          const communityPosts = await Post.find({ _id: { $in: community.postIDs } });
+          for (const post of communityPosts) {
+              if (post.commentIDs && post.commentIDs.length > 0) {
+                  await deleteCommentsRecursively(post.commentIDs);
+              }
+              await post.deleteOne();
+          }
+          await community.deleteOne();
+      }
+
+      // Finally, delete the user
+      await user.deleteOne();
+
+      res.json({ message: 'User and all related data (posts, comments, and communities) deleted successfully.' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+      res.status(500).json({ message: 'Error deleting user: ' + err.message });
   }
 });
 

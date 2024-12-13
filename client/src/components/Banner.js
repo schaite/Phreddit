@@ -38,8 +38,16 @@ function Banner({ isLoggedIn,userDisplayName, onLogout }) {
     }
 
     const handleProfileClick = () => {
-        navigate("/profile");
-    }
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        const userId = storedUser?.id;
+    
+        if (userId) {
+            navigate(`/profile/${userId}`);
+        } else {
+            navigate("/profile");
+        }
+    };
+    
     return (
         <div>
             <header id="banner" className="banner">

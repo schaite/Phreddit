@@ -61,6 +61,15 @@
     gap: 15px;
 }
 
+.admin-button{
+    padding: 5px 10px;
+    background-color: grey;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .list-item {
     display: flex;
     align-items: center; /* Align items vertically */
@@ -111,3 +120,9 @@
     margin-bottom: 20px;
     text-align: center;
 }
+
+.edit-link {
+    color: black;
+    text-decoration: none;
+  }
+  

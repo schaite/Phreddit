@@ -21,23 +21,22 @@ const communitySchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     members: {
         type:[{
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'User'
         }],
-        required: true,
-        validate: [arrayLimit, '{PATH} must have at least one member']
     },
     memberCount:{
         type: Number,
         default: 0
     }
 });
-
-function arrayLimit(val){
-    return val.length > 0;
-}
 
 communitySchema.virtual('url').get(function () {
     return `communities/${this.id}`;

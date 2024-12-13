@@ -14,7 +14,7 @@ function CommunityPage() {
     const [postCount, setPostCount] = useState(0);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
     useEffect(() => {
         const fetchData = async () => {
@@ -68,6 +68,31 @@ function CommunityPage() {
         fetchData();
     }, [communityId]);
 
+    const handleJoinCommunity = async () => {
+        try {
+            const response = await axios.put(`/api/communities/${community._id}/members`, {
+                userId: loggedInUser.id,
+                action: 'join',
+            });
+            setCommunity( response.data); // Update with the updated community data
+        } catch (err) {
+            console.error("Error joining community:", err);
+        }
+    };
+    
+    const handleLeaveCommunity = async () => {
+        try {
+            const response = await axios.put(`/api/communities/${community._id}/members`, {
+                userId: loggedInUser.id,
+                action: 'leave',
+            });
+            setCommunity( response.data); // Update with the updated community data
+        } catch (err) {
+            console.error("Error leaving community:", err);
+        }
+    };
+    
+
     useEffect(() => {
         if (error) {
             setTimeout(() => {
@@ -92,10 +117,23 @@ function CommunityPage() {
                             </div>
                         </header>
                         <p>{community ? community.description : "Loading description..."}</p>
-                        <p>Created {community ? formatTimestamp(community.startDate) : "Loading date..."}</p>
-                        <p>
-                            <span className="community-stats">{postCount} posts</span><span className="community-stats">{community && community.members ? community.members.length : 0} members</span>
-                        </p>
+                        <p>Created by {community? community.createdBy.displayName : "Loading creator.."} {community ? formatTimestamp(community.startDate) : "Loading date..."}</p>
+                            <p>
+                                <span className="community-stats">{postCount} posts</span>
+                                <span className="community-stats">
+                                    {community && community.members ? community.members.length : 0} members
+                                </span>
+                            </p>
+                            {loggedInUser &&
+                                (community && community.members.some((member) => member._id === loggedInUser.id) ? (
+                                <button onClick={handleLeaveCommunity} className="community-action-button">
+                                    Leave Community
+                                </button>
+                                ) : (
+                                <button onClick={handleJoinCommunity} className="community-action-button">
+                                    Join Community
+                                </button>
+                            ))}
                         <hr />
                     </div>
                     {/* Div for Posts from User's Communities */}

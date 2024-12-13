@@ -12,9 +12,9 @@ import "../stylesheets/phreddit.css";
 import NewCommunityPage from "./NewCommunityPage";
 import PostPage from "./PostPage";
 import NewCommentPage from "./NewCommentPage";
-import UserProfile from "./UserProfile";
 import CommunityPage from "./CommunityPage";
 import SearchPage from "./SearchPage";
+import UserProfile from "./UserProfile";
 
 export default function Phreddit() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,15 +27,19 @@ export default function Phreddit() {
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
+    console.log(storedUser);
     if (storedUser) {
       setIsLoggedIn(true);
       setUser(storedUser);
+      setIsAdmin(storedUser.role === "admin"); // Set admin status dynamically
+      console.log(user);
     }
   }, []);
 
   const handleLogin = (userDetails) => {
     setIsLoggedIn(true);
     setUser(userDetails);
+    setIsAdmin(userDetails.role === "admin"); // Check admin role on login
 
     // Save login state and user details to localStorage
     localStorage.setItem("user", JSON.stringify(userDetails));
@@ -43,7 +47,8 @@ export default function Phreddit() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUser({ displayName: "", role: "guest", id: null});
+    setUser({ displayName: "", role: "guest", id: null });
+    setIsAdmin(false); // Reset admin state
 
     // Clear login state and user details from localStorage
     localStorage.removeItem("user");
@@ -130,7 +135,7 @@ export default function Phreddit() {
                   }
                 />
                 <Route 
-                  path="/profile" 
+                  path="/profile/:userId" 
                   element={
                       <UserProfile 
                         userId={isLoggedIn ? user.id : null} 
