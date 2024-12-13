@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from "axios";
 import "../stylesheets/UserProfile.css";
 import { formatTimestamp } from "./Timestamp";
@@ -164,7 +165,7 @@ import { formatTimestamp } from "./Timestamp";
 
   return (
 <div className="user-profile">
-      <h1>"User Profile"</h1>
+      <h1>User Profile</h1>
       {error ? (
         <div className="error-message">{error}</div>
       ) : (
@@ -288,5 +289,12 @@ import { formatTimestamp } from "./Timestamp";
     </div>
   );
 }
+
+UserProfile.propTypes = {
+  userId: PropTypes.string,
+  isLoggedIn: PropTypes.bool.isRequired,
+  refreshCommunities: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
+};
 
 export default UserProfile;
