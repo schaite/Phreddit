@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types"; // Import PropTypes for prop validation
 
 class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -6,12 +7,13 @@ class ErrorBoundary extends React.Component {
         this.state = { hasError: false };
     }
 
-    static getDerivedStateFromError(error) {
+    static getDerivedStateFromError() {
         // Update state so the next render will show the fallback UI.
         return { hasError: true };
     }
 
     componentDidCatch(error, errorInfo) {
+        // Log the error details (can be expanded for reporting to an error monitoring service)
         console.error("Error caught in ErrorBoundary:", error, errorInfo);
     }
 
@@ -33,5 +35,10 @@ class ErrorBoundary extends React.Component {
         return this.props.children;
     }
 }
+
+// Add prop validation for the `children` prop
+ErrorBoundary.propTypes = {
+    children: PropTypes.node.isRequired, // `children` is expected and required
+};
 
 export default ErrorBoundary;

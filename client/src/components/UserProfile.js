@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from "axios";
 import "../stylesheets/UserProfile.css";
 import { formatTimestamp } from "./Timestamp";
@@ -7,17 +8,43 @@ import { formatTimestamp } from "./Timestamp";
   const UserProfile = ({ userId, isLoggedIn, refreshCommunities, isAdmin }) => {
     const { userId: routeUserId } = useParams();
     const navigate = useNavigate();
-    const getDefaultTab = () => {
-      const savedTab = localStorage.getItem("activeTab");
-      if (savedTab) return savedTab; // Return saved tab if available
-      return isAdmin ? "users" : "posts"; // Default tab based on admin status
-    };
     const [userInfo, setUserInfo] = useState({});
     const [activeTab, setActiveTab] = useState(isAdmin ? "users" : "posts"); // Set default tab based on admin status
     const [data, setData] = useState([]);
     const [error, setError] = useState("");
     
-    
+    const fetchData = useCallback(
+      async (type, targetUserId) => {
+        if (!targetUserId && type !== "users") {
+          setError("User ID is missing. Please log in again.");
+          return;
+        }
+  
+        try {
+          let endpoint = "";
+          if (type === "users") {
+            endpoint = `/api/users`;
+          } else if (type === "posts") {
+            endpoint = `/api/posts?userId=${targetUserId}`;
+          } else if (type === "communities") {
+            endpoint = `/api/communities/created-communities/${targetUserId}`;
+          } else if (type === "comments") {
+            const comments = await axios.get(`/api/comments?userId=${targetUserId}`);
+            const combinedData = await mapCommentsToPosts(comments.data);
+            setData(combinedData);
+            return;
+          }
+  
+          const response = await axios.get(endpoint);
+          setData(response.data || []);
+        } catch (err) {
+          console.error(`Failed to load ${type}:`, err.message);
+          setError(`Failed to load ${type}`);
+          setData([]);
+        }
+      },
+      [] // Empty dependency array ensures the function is memoized and won't change on re-renders
+    );
   
     useEffect(() => {
       const targetUserId = routeUserId || userId || JSON.parse(localStorage.getItem("user"))?.id;
@@ -29,7 +56,7 @@ import { formatTimestamp } from "./Timestamp";
   
       fetchUserInfo(targetUserId);
       fetchData(activeTab, targetUserId);
-    }, [routeUserId, userId, isLoggedIn, activeTab]);
+    }, [routeUserId, userId, isLoggedIn, activeTab,fetchData]);
 
   const fetchUserInfo = async (targetUserId) => {
     try {
@@ -38,36 +65,6 @@ import { formatTimestamp } from "./Timestamp";
     } catch (err) {
       console.error("Error fetching user info:", err.message);
       setError("Failed to load user information.");
-    }
-  };
-
-  const fetchData = async (type, targetUserId) => {
-    if (!targetUserId && type !== "users") {
-      setError("User ID is missing. Please log in again.");
-      return;
-    }
-
-    try {
-      let endpoint = "";
-      if (type === "users") {
-        endpoint = `/api/users`;
-      } else if (type === "posts") {
-        endpoint = `/api/posts?userId=${targetUserId}`;
-      } else if (type === "communities") {
-        endpoint = `/api/communities/created-communities/${targetUserId}`;
-      } else if (type === "comments") {
-        const comments = await axios.get(`/api/comments?userId=${targetUserId}`);
-        const combinedData = await mapCommentsToPosts(comments.data);
-        setData(combinedData);
-        return;
-      }
-
-      const response = await axios.get(endpoint);
-      setData(response.data || []); // Ensure data is always an array
-    } catch (err) {
-      console.error(`Failed to load ${type}:`, err.message);
-      setError(`Failed to load ${type}`);
-      setData([]); // Reset data to an empty array on failure
     }
   };
 
@@ -170,7 +167,7 @@ import { formatTimestamp } from "./Timestamp";
 
   return (
 <div className="user-profile">
-      <h1>"User Profile"</h1>
+      <h1>User Profile</h1>
       {error ? (
         <div className="error-message">{error}</div>
       ) : (
@@ -272,11 +269,12 @@ import { formatTimestamp } from "./Timestamp";
               data.map((comment) => (
                 <div key={comment._id} className="list-item">
                   <p>
-                    <Link 
-                      to="/post/${comment.postId._id}/new-comment?parent=${comment._id}" 
-                      state={{ comment }} 
-                      className="edit-link"
-                    >
+                  <Link
+                    to={`/post/${comment.postId}/new-comment?parent=${comment._id}`}
+                    state={{ comment }}
+                    className="edit-link"
+                  >
+
                       <strong>{comment.postTitle}</strong>: {comment.content
                         ? `${comment.content.substring(0, 20)}${comment.content.length > 20 ? "..." : ""}`
                         : "No content available"}
@@ -294,5 +292,13 @@ import { formatTimestamp } from "./Timestamp";
     </div>
   );
 }
+
+UserProfile.propTypes = {
+  userId: PropTypes.string,
+  isLoggedIn: PropTypes.bool.isRequired,
+  refreshCommunities: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
+};
+
 
 export default UserProfile;

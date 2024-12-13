@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../stylesheets/NewCommentPage.css";
@@ -100,5 +101,10 @@ function NewCommentPage({ userId, isLoggedIn }) {
     </div>
   );
 }
+
+NewCommentPage.propTypes = {
+  userId: PropTypes.string.isRequired, // Validate that userId is a required string
+  isLoggedIn: PropTypes.bool.isRequired, // Validate that isLoggedIn is a required boolean
+};
 
 export default NewCommentPage;

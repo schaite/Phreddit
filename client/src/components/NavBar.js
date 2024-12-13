@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from "axios";
 import "../stylesheets/NavBar.css";
 
@@ -95,6 +96,12 @@ function NavBar({ isLoggedIn, userId, refreshCommunities}) {
         </nav>
     );
 }
+
+NavBar.propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired,
+    userId: PropTypes.string,
+    refreshCommunities: PropTypes.func.isRequired,
+};
 
 export default NavBar;
 

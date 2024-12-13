@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {useNavigate, useLocation, Link} from "react-router-dom";
+import PropTypes from "prop-types";
 import '../stylesheets/Banner.css';
 
 function Banner({ isLoggedIn,userDisplayName, onLogout }) {
@@ -114,5 +115,11 @@ function Banner({ isLoggedIn,userDisplayName, onLogout }) {
         </div>
     );
 }
+
+Banner.propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired, // `isLoggedIn` should be a boolean
+    userDisplayName: PropTypes.string, // `userDisplayName` should be a string
+    onLogout: PropTypes.func.isRequired, // `onLogout` should be a function
+  };
 
 export default Banner;

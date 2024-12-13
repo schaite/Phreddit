@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatTimestamp } from "./Timestamp";
 import '../stylesheets/PostPage.css';
@@ -14,7 +15,7 @@ function PostPage({isLoggedIn}) {
     const [linkFlair, setLinkFlair] = useState('');
     const [comments, setComments] = useState([]);
     const [totalComments, setTotalComments] = useState(0);
-    const [error, setError] = useState(null);
+    const error = useState(null)[0];
 
     // Fetch post data and increment views
     useEffect(() => {
@@ -155,5 +156,9 @@ function PostPage({isLoggedIn}) {
         </div>
     );
 }
+
+PostPage.propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired,
+};
 
 export default PostPage;

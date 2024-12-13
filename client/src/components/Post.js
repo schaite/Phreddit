@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 import "../stylesheets/Home.css";
 import "../stylesheets/Post.css";
 import { formatTimestamp } from "./Timestamp.js";
@@ -38,6 +39,35 @@ function Post({ post, showCommunityName, comments, pageType}) {
         </div>
     );
 }
+
+Post.propTypes = {
+    post: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        communityName: PropTypes.string,
+        postedBy: PropTypes.shape({
+            displayName: PropTypes.string.isRequired,
+        }).isRequired,
+        postedDate: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        linkFlair: PropTypes.string,
+        content: PropTypes.string.isRequired,
+        views: PropTypes.number.isRequired,
+        vote: PropTypes.number.isRequired,
+        commentIDs: PropTypes.arrayOf(
+            PropTypes.shape({
+                _id: PropTypes.string.isRequired,
+            })
+        ),
+    }).isRequired,
+    showCommunityName: PropTypes.bool.isRequired,
+    comments: PropTypes.arrayOf(
+        PropTypes.shape({
+            _id: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+    pageType: PropTypes.oneOf(['home', 'community', 'search']).isRequired,
+};
+
 
 export default Post;
 

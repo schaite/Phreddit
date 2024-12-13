@@ -1,6 +1,8 @@
 import React from "react";
 import '../stylesheets/Comment.css';
 import Comment from './Comment.js';
+import PropTypes from 'prop-types';
+
 
 const CommentsList = ({ commentIDs, comments, postID, isLoggedIn }) => {
     // Render the top-level comments and their replies
@@ -22,5 +24,22 @@ const CommentsList = ({ commentIDs, comments, postID, isLoggedIn }) => {
         </div>
     );
 };
+
+CommentsList.propTypes = {
+    commentIDs: PropTypes.arrayOf(
+        PropTypes.shape({
+            _id: PropTypes.string.isRequired, // Each commentID object should have a string _id
+        })
+    ).isRequired,
+    comments: PropTypes.arrayOf(
+        PropTypes.shape({
+            _id: PropTypes.string.isRequired, // Each comment object should have a string _id
+            commentedDate: PropTypes.string.isRequired, // Comment date as a string
+        })
+    ).isRequired,
+    postID: PropTypes.string.isRequired, // postID should be a string
+    isLoggedIn: PropTypes.bool.isRequired, // isLoggedIn should be a boolean
+};
+
 
 export default CommentsList;

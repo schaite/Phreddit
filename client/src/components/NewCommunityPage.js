@@ -1,5 +1,6 @@
 import React, { useEffect,useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from "axios";
 import "../stylesheets/NewCommunityPage.css";
 
@@ -130,6 +131,10 @@ function NewCommunityPage({refreshCommunities}) {
     </div>
   );
 }
+
+NewCommunityPage.propTypes = {
+  refreshCommunities: PropTypes.func.isRequired, // Validate that refreshCommunities is a required function
+};
 
 export default NewCommunityPage;
 

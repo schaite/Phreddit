@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { formatTimestamp } from "./Timestamp";
 import '../stylesheets/Comment.css';
 
 const Comment = ({ comment, comments, postID, indentLevel = 0, isLoggedIn}) => {
-    const [errorMessage, setErrorMessage] = useState('');
+    const setErrorMessage = useState('')[1];
     const navigate = useNavigate(); 
 
     const handleReplyClick = () => {
@@ -85,6 +86,37 @@ const Comment = ({ comment, comments, postID, indentLevel = 0, isLoggedIn}) => {
             )}
         </div>
     );
+};
+
+Comment.propTypes = {
+    comment: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        commentedBy: PropTypes.shape({
+            displayName: PropTypes.string.isRequired,
+        }).isRequired,
+        commentedDate: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        vote: PropTypes.number.isRequired,
+        commentIDs: PropTypes.arrayOf(
+            PropTypes.shape({
+                _id: PropTypes.string.isRequired,
+            })
+        ),
+    }).isRequired,
+    comments: PropTypes.arrayOf(
+        PropTypes.shape({
+            _id: PropTypes.string.isRequired,
+            commentedBy: PropTypes.shape({
+                displayName: PropTypes.string.isRequired,
+            }).isRequired,
+            commentedDate: PropTypes.string.isRequired,
+            content: PropTypes.string.isRequired,
+            vote: PropTypes.number.isRequired,
+        })
+    ).isRequired,
+    postID: PropTypes.string.isRequired,
+    indentLevel: PropTypes.number,
+    isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default Comment;
