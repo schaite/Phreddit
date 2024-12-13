@@ -23,6 +23,7 @@ router.get('/', async (req, res) => {
       .populate('commentIDs', 'content commentedBy');
     res.json(comments);
   } catch (err) {
+    console.error("Error fetching comments:", err); // Log the error
     res.status(500).json({ message: "Error fetching comments." });
   }
 });

@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
             .populate('linkFlairID', 'content')
             .populate('commentIDs');
         res.json(posts);
-    } catch (err) {
+    } catch {
         res.status(500).json({ message: "Error fetching posts." });
     }
 });
@@ -94,7 +94,7 @@ router.put('/:id', async (req, res) => {
         return res.status(400).json({ message: 'Invalid Post ID' });
     }
 
-    const { title, content, linkFlairID } = req.body;
+    const { linkFlairID } = req.body;
 
     // Validate ObjectId for linkFlairID if provided
     if (linkFlairID && !mongoose.Types.ObjectId.isValid(linkFlairID)) {

@@ -88,7 +88,7 @@ router.post('/register', async (req, res) => {
 
     await newUser.save();
     res.status(201).json({ message: 'Account created successfully.' });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 });
