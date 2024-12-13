@@ -205,6 +205,7 @@ Phreddit is a simplified version of Reddit designed as a learning project. It is
 10. **Search Page** (Guest, User): Enables users to search posts and communities dynamically.
 11. **User Profile**: Displays personalized data for individual users, including posts, comments, and communities.
 12. **Admin Profile**: Offers advanced administrative features like viewing and managing user lists.
+13. **Created README.md file**
 
 ### **Extras**
 1. Resolved an error in the **New Post Page** that ensured created posts were properly added to their respective communities.
