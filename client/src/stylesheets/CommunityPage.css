@@ -8,6 +8,7 @@
 
 .community-page h1 {
     font-size:30px;
+    margin-bottom: 5px;
 }
 
 .community-header-container {
@@ -33,7 +34,7 @@
 }
 
 .sort-button:hover, .sort-button:active {
-    background-color: #ff4500; /* Reddish-orange when hovered */
+    background-color: #ff4500;
 }
 
 .post {
@@ -55,4 +56,18 @@
     padding: 5px 10px;
     display: inline-block; /* Keeps it inline while applying spacing */
     margin-right: 5px; /* Adds space between items */
+} 
+  
+.community-action-button {
+    padding: 10px 15px;
+    background-color: grey;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
+  
+.community-action-button:hover {
+    background-color: #ff4500;
+}
+  
