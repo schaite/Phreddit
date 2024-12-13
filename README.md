@@ -167,11 +167,23 @@ Phreddit is a simplified version of Reddit designed as a learning project. It is
 ### Testing
 - **Server Testing**:
   - Run Jest tests for the server:
+  To run the mongoDB.test.js and express.test.js
+  Install 
+     ```bash
+     npm install --save-dev jest
+     ```
+     ```bash
+     npm install supertest
+     ```
     ```bash
     npm test
     ```
 - **Client Testing**:
   - Run React tests for the client:
+    Install
+     ```bash
+   npm install --save-dev react-router-dom
+     ```
     ```bash
     npm test
     ```
@@ -220,6 +232,7 @@ Phreddit is a simplified version of Reddit designed as a learning project. It is
 3) New Comment Page: Registered User can add comments.
 4) UML- Designed Unified Modeling Language (UML) diagrams to illustrate the structure and workflow of the application, including component interaction, and data flow covering client, server, and database
 5) Testing: Verified that deleting a post removes all its comments from the database. Confirmed the server is listening on port 8000. Ensured the "Create Post" button is disabled for guests and enabled for registered users.
+6) README.md: Documentation
 
 ---
 
