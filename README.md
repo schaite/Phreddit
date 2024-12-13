@@ -182,7 +182,7 @@ Phreddit is a simplified version of Reddit designed as a learning project. It is
   - Run React tests for the client:
     Install
      ```bash
-   npm install --save-dev react-router-dom
+     npm install --save-dev react-router-dom
      ```
     ```bash
     npm test
