@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const Community = require('../models/Communities');
-const User = require('../models/Users'); 
 const Post = require('../models/Posts'); 
 const Comment = require('../models/Comments');
 
