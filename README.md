@@ -32,16 +32,16 @@ Phreddit is a simplified version of Reddit designed as a learning project. It is
 - **Registration**:
   - Register with name, email, password, and display name.
 
--**Login**
+- **Login**
   - Login to access user-specific features.
 
 - **Home Page**: 
   -Displays all posts with user's community posts listed on top and options to sort by newest, oldest, or active.
 
--**Create Community Page**
+- **Create Community Page**
   - Create new communities with unique names and descriptions.
 
--**Community Page**
+- **Community Page**
   - Clicking community list items takes user to this page
   - View community specific posts with sorting options.
   - Join or leave communities.
