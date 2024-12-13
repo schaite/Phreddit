@@ -27,14 +27,12 @@ export default function Phreddit() {
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    console.log(storedUser);
     if (storedUser) {
       setIsLoggedIn(true);
       setUser(storedUser);
       setIsAdmin(storedUser.role === "admin"); // Set admin status dynamically
-      console.log(user);
     }
-  }, [user]);
+  }, []);
 
   const handleLogin = (userDetails) => {
     setIsLoggedIn(true);
